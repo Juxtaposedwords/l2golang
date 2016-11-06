@@ -13,22 +13,20 @@ func NewBitmap(max int, filePath string) Bitmap {
 }
 
 // sets the integer number's present in the bitmap
-func (bits Bitmap) Set(i int) {
-	index := byte(i/8)
-	bit := byte(i%8)
-	bits[index] |= 1 << bit
+func (bits Bitmap) Set(i uint) {
+	bits[i/8] &= 1 << i%8
+	fmt.Println(bits[i/8])
 	//return bits[i/8] & i%8 != 0
 }
 
 // Not sure here?
-func (bits Bitmap) Get(number int) bool {
+func (bits *Bitmap) Get(number int) bool {
 	return true
 }
 
 
 func main() {
-	shit := NewBitmap(100, "shit")
-	shit.Set(18-1)
-	fmt.Println(shit)
+	test := NewBitmap(13, "bad.txt")
+	test.Set(12)
+	fmt.Println(test)
 }
-
