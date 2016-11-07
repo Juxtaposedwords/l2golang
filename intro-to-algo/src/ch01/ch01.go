@@ -2,7 +2,7 @@ package ch01
 
 
 func insertSort(A []int) {
-	for j := 0; j < len(A); j++ {
+	for j := 1; j < len(A); j++ {
 		key := A[j]
 		i := j -1
 		for i >=  0 && A[i] > key {
