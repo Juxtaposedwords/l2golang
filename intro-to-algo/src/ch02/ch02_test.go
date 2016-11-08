@@ -56,7 +56,7 @@ func TestReverseInsertSortLargeValues(t *testing.T) {
 		t.Errorf("insertSort():  got %v, want %v", got, want)
 	}
 }
-/*func TestMergeSort(t *testing.T) {
+func TestMergeSort(t *testing.T) {
 	got := []int{5, 2, 4, 6, 1, 3}
 	want := []int{1, 2, 3, 4, 5, 6}
 	mergeSort(got)
@@ -80,4 +80,4 @@ func TestMergeSortLargeValues(t *testing.T) {
 	if !reflect.DeepEqual(want, got) {
 		t.Errorf("insertSort():  got %v, want %v", got, want)
 	}
-}*/
+}
