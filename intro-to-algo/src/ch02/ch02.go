@@ -38,9 +38,4 @@ func reverseInsertSort(A []int){
 	}
 }
 func mergeSort(A []int){
-	n := q - p + 1
-}
-
-func merge(A []int, p int, q int, r int){
-	
 }
