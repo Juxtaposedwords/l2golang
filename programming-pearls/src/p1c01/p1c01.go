@@ -2,6 +2,9 @@ package p1c01
 
 import (
 	"log"
+	"io/ioutil"
+	"strings"
+	"strconv"
 )
 
 const maxNum = 100000
@@ -21,9 +24,9 @@ func (b Bitmap) SetBit(n int) {
 	b[i] = b[i] | mask
 }
 
-func (b Bitmap) CheckBit(n int) bool {
+func (b Bitmap) GetBit(n int) bool {
 	if n < 0 || n > maxNum {
-		log.Fatalf("CheckBit:  invalid argument: %d", n)
+		log.Fatalf("GetBit:  invalid argument: %d", n)
 	}
 	i, mask := getIndexAndMask(n)
 	return (b[i] & mask != 0)
@@ -34,4 +37,16 @@ func getIndexAndMask(n int) (int, byte) {
 	bit := byte(n % 8)
 	mask := byte(1 << bit)
 	return i, mask	
+}
+func (b Bitmap) LoadFromFile(n string) error {
+	a, err := ioutil.ReadFile(n) 
+	if err != nil {
+		return err
+	}
+	lines := strings.Split(string(a), "\n")
+	for _, item := range lines{
+		x, _ := strconv.Atoi(item)
+		b.SetBit(x)
+	}
+	return err
 }
