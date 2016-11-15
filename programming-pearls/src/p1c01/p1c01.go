@@ -46,10 +46,10 @@ func (b Bitmap) LoadFromFile(n string) error {
 	lines := strings.Split(string(a), "\n")
 	for _, item := range lines{
 		x, err := strconv.Atoi(item)
-		b.SetBit(x)
 		if err != nil {
 			return err
 		}	
+		b.SetBit(x)
 	}
 	return nil
 }
