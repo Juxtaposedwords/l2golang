@@ -3,19 +3,19 @@ import "fmt"
 func main() {
     a := loadSlice(1)
     b := loadMatrix(a[0])
-    c := primaryDiag(b)
-    d := secondaryDiag(b)
-    e := absSlices(c,d)
-    fmt.Printf("%z",d)
-    fmt.Printf("%z",e)
+    c := sumSlice(primaryDiag(b))
+    d := sumSlice(secondaryDiag(b))
+    e := Abs(Abs(c) - Abs(d))
+    fmt.Printf("%d", e)
 }
 
-func absSlices(a,b []int)  int{
-    var abs int
-    for i, _ := range(a) {
-        abs += Abs(a[i])+ Abs(b[i])
+
+func sumSlice(a []int)  int{
+    var sum int
+    for _, i := range(a) {
+        sum += i
     }
-    return abs
+    return sum
 }
 func Abs(x int) int {
     if x < 0 {
@@ -32,11 +32,11 @@ func primaryDiag(x [][]int) []int{
     return b
 }
 func secondaryDiag(x [][]int) []int{
-    a := len(x[0])
+    a := len(x[0]) - 1
     b := []int{}
-    for i:=a; i > 0 ; i-- {
-        a -= 1
+    for i:=0; i < 3  ; i++ {
         b = append(b, x[i][a])
+        a -= 1
     }
     return b
 }
