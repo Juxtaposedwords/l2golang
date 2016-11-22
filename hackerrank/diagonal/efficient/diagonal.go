@@ -1,7 +1,7 @@
-package main
+package diag
 import "fmt"
 
-func main(){
+func diagValues() int{
     a := readInt() 
     var b,c int
     for i:=0; i < a ; i++ {
@@ -20,7 +20,7 @@ func main(){
             }
         }
     }
-    fmt.Printf("%d", Abs(b-c))
+    return Abs(b-c)
 }
 func Abs(x int) int {
     if x < 0 {

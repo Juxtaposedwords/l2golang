@@ -1,6 +1,6 @@
-package main
+package diag
 import "fmt"
-func main() {
+func diag() {
     a := diagDif()
     fmt.Printf("%d", a)
 }
