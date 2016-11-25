@@ -1,12 +1,22 @@
 package diag
-import "fmt"
-
-func diagValues() int{
-    a := readInt() 
+import (
+    "fmt"   
+    "io"
+//    "strings"
+) 
+func diagValue(r io.Reader)(int,error) {
+    var err error
+    a, err := readInt(r) 
+    if err != nil {
+        return 0, err
+    }
     var b,c int
     for i:=0; i < a ; i++ {
         for j:=0; j < a ; j++ {
-            x := readInt()
+            x, err := readInt(r)
+            if err != nil {
+                return 0, err
+            }
             switch {
                 case (j == a-i-1 ) && (j == i):
                     b += x
@@ -20,7 +30,7 @@ func diagValues() int{
             }
         }
     }
-    return Abs(b-c)
+    return Abs(b-c), nil
 }
 func Abs(x int) int {
     if x < 0 {
@@ -28,8 +38,8 @@ func Abs(x int) int {
     }
     return x
 }
-func readInt() int{
-    var b int
-    fmt.Scanf("%d", &b)
-    return b
-}
+func readInt(r io.Reader) (int, error){
+    var i int
+    _, err := fmt.Fscan(r,&i)
+    return i,err
+}	
