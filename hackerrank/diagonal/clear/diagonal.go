@@ -1,16 +1,21 @@
 package diag
-import "fmt"
-func diag() {
-    a := diagDif()
-    fmt.Printf("%d", a)
-}
-func diagDif() int {
-    a := readInt()
-    b := loadMatrix(a)
+import (
+    "fmt"
+    "io"
+)
+func diagValue(r io.Reader) (int,error) {
+    a,err := readInt(r)
+    if err != nil {
+        return 0, err
+    }
+    b, err := loadMatrix(a, r)
+    if err != nil {
+        return 0, err
+    }
     c := sumSlice(primaryDiag(b))
     d := sumSlice(secondaryDiag(b))
     e := Abs(c - d)
-    return e
+    return e, nil
 }
 
 
@@ -45,24 +50,34 @@ func secondaryDiag(x [][]int) []int{
     }
     return c
 }
-func loadMatrix(x int)[][]int{
+func loadMatrix(x int, r io.Reader)([][]int, error){
     a := [][]int{}
     for i:=0; i<x; i ++{
-        b := loadSlice(x)
+        b, err := loadSlice(x, r)
+        if err != nil {
+            return nil, err
+        }
         a = append(a,b)
     }
-    return a
+    return a, nil
 }
-func loadSlice(x int) []int{
+func loadSlice(x int, r io.Reader)([]int,error){
     a := []int{}
-    for i:=0; i<x; i++{
-        a = append(a, readInt())
+    for i:=0; i<x; i++ {
+        x, err := readInt(r)
+        if err != nil {
+            return nil, err
+        }
+        a = append(a, x)
     }
-    return a
+    return a, nil
 }
 
-func readInt() int{
+func readInt(r io.Reader) (int, error){
     var b int
-    fmt.Scanf("%d", &b)
-    return b
+    _, err := fmt.Scanf("%d", &b)
+    if err != nil {
+        return 0, err
+    }
+    return b, nil
 }
