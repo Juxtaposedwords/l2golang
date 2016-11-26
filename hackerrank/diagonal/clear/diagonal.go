@@ -57,6 +57,10 @@ func loadMatrix(x int, r io.Reader)([][]int, error){
         if err != nil {
             return nil, err
         }
+        if len(b) != x {
+            err := fmt.Errorf("The %dth row is not %d long",i+1, x)
+            return nil, err
+        }
         a = append(a,b)
     }
     return a, nil
@@ -76,6 +80,7 @@ func loadSlice(x int, r io.Reader)([]int,error){
 func readInt(r io.Reader) (int, error){
     var b int
     _, err := fmt.Scanf("%d", &b)
+    fmt.Printf("%d\n",b)
     if err != nil {
         return 0, err
     }
