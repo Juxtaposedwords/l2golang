@@ -1,4 +1,4 @@
-package diag
+package diagClear
 
 import (
 	"strings"

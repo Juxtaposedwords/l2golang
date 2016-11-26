@@ -1,4 +1,4 @@
-package diag
+package diagEfficient
 import (
     "fmt"   
     "io"
