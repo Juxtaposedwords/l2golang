@@ -6,7 +6,7 @@ type Node struct{
 	right *Node
 }
 
-func(n Node) Insert(k int){
+func(n *Node) Insert(k int){
 	switch {
 	case k <= n.key && n.left == nil : 
 		n.left = &Node{key: k}
