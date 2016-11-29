@@ -11,8 +11,10 @@ func TestInsert(t *testing.T) {
 	root.Insert(3)
 	root.Insert(2)
 	root.Insert(1)
+	root.Insert(4)
 	root.Insert(6)
 	root.Insert(7)
+	root.Insert(3)
 	root.Traverse()
 	//fmt.Printf("%v\n", root)
 /*	x := *root.left

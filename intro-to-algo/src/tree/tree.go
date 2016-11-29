@@ -10,9 +10,9 @@ type Node struct{
 func(n *Node) Insert(k int){
 	switch {
 	case k <= n.key && n.left == nil : 
-		n.left = &Node{key: k}
+		n.left = &Node{key: k, depth: n.depth+1}
 	case k > n.key  && n.right == nil :
-		n.right = &Node{key: k}
+		n.right = &Node{key: k, depth: n.depth+1}
 	case k <= n.key  && n.left != nil : 
 		n.left.Insert(k)
 	case k > n.key  && n.right != nil :
@@ -20,8 +20,7 @@ func(n *Node) Insert(k int){
 	}
 }
 func(n *Node) Traverse() {
-
-	fmt.Printf(" %z \n",n)
+	fmt.Printf("%z\n",n)
 	if n.left != nil {
 		n.left.Traverse()
 	}
