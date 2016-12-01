@@ -1,5 +1,8 @@
 package avltree
-import "fmt"
+import (
+	"fmt"
+	"errors"
+)
 type Node struct{
 	key int
 	depth int
@@ -42,4 +45,31 @@ func(n *Node) Traverse()  {
 	if n.right != nil {
 		n.right.Traverse()
 	}
+}
+
+func left_rotate(r *Node)(*Node, error){
+	var left,p *Node  
+	if r.right == nil {
+		return nil, errors.New("The root node provided has no right node")
+	}
+	p = r.right
+	if p.left != nil {
+		left = p.left
+	}
+	p.left = r
+	r.right = left
+	return p, nil
+}
+func right_rotate(r *Node)(*Node, error){
+	var right,p *Node  
+	if r.left == nil {
+		return nil, errors.New("The root node provided has no left node")
+	}
+	p = r.left
+	if p.right != nil {
+		right = p.right
+	}
+	p.right = r
+	r.left = right
+	return p, nil
 }
