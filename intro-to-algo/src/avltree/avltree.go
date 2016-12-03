@@ -1,7 +1,6 @@
 package avltree
 import (
 	"fmt"
-	"errors"
 )
 type Node struct{
 	key int
@@ -10,7 +9,17 @@ type Node struct{
 	left *Node
 	right *Node
 }
+type Tree struct{
+	root *Node
+}
 
+func(t *Tree) Insert(k int){
+	if t.root == nil{
+		t.root = &Node{key: k, depth: 0, height: 0}
+	} else {
+		t.root.Insert(k)
+	}
+}
 func(n *Node) Insert(k int){
 	switch {
 	case k <= n.key && n.left == nil : 
@@ -47,29 +56,23 @@ func(n *Node) Traverse()  {
 	}
 }
 
-func left_rotate(r *Node)(*Node, error){
+func left_rotate(r *Node)(*Node){
 	var left,p *Node  
-	if r.right == nil {
-		return nil, errors.New("The root node provided has no right node")
-	}
 	p = r.right
 	if p.left != nil {
 		left = p.left
 	}
 	p.left = r
 	r.right = left
-	return p, nil
+	return p
 }
-func right_rotate(r *Node)(*Node, error){
+func right_rotate(r *Node)(*Node){
 	var right,p *Node  
-	if r.left == nil {
-		return nil, errors.New("The root node provided has no left node")
-	}
 	p = r.left
 	if p.right != nil {
 		right = p.right
 	}
 	p.right = r
 	r.left = right
-	return p, nil
+	return p
 }

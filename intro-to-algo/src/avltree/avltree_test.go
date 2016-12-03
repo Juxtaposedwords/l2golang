@@ -5,10 +5,9 @@ import (
 )
 
 func TestInsert(t *testing.T) {
-
-	root := &Node{key: 1}
-	root.Insert(2)
-	root.Insert(3)
-	root,_ = left_rotate(root)
-	root.Traverse()
+	tree := &Tree{}
+	tree.Insert(1)
+	tree.Insert(2)
+	tree.Insert(3)
+	tree.root.Traverse()
 }
