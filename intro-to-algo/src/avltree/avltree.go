@@ -47,15 +47,21 @@ func(n *Node) Insert(k int){
 	}
 }
 func(n *Node) Traverse()  {
-	fmt.Printf("%z\n", n)
 	if n.left != nil {
 		n.left.Traverse()
 	}
+	fmt.Printf("Node: %d\n", n.key)
+	fmt.Printf("   Left Node: %z\n", n.left)
+	fmt.Printf("   Right Node: %z\n", n.right)
+
 	if n.right != nil {
 		n.right.Traverse()
 	}
 }
 
+func(t *Tree) Traverse() {
+	t.root.Traverse()
+}
 func left_rotate(r *Node)(*Node){
 	var left,p *Node  
 	p = r.right
