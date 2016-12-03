@@ -32,6 +32,9 @@ func(n *Node) Insert(k int){
 		n.right.Insert(k)
 	}
 
+	n.SetHeight()
+}
+func(n *Node) SetHeight(){
 	left, right := -1, -1
 	if n.left != nil {
 		left = n.left.height
@@ -44,12 +47,13 @@ func(n *Node) Insert(k int){
 		n.height = right + 1
 	} else if left > right {
 		n.height = left + 1
-	}
+	}	
 }
 func(n *Node) Traverse()  {
 	if n.left != nil {
 		n.left.Traverse()
 	}
+
 	fmt.Printf("Node: %d\n", n.key)
 	fmt.Printf("   Left Node: %z\n", n.left)
 	fmt.Printf("   Right Node: %z\n", n.right)
@@ -62,23 +66,42 @@ func(n *Node) Traverse()  {
 func(t *Tree) Traverse() {
 	t.root.Traverse()
 }
-func left_rotate(r *Node)(*Node){
-	var left,p *Node  
-	p = r.right
-	if p.left != nil {
-		left = p.left
+func(t *Tree) Rebalance() {
+	left, right := 0,0
+	if t.root.left != nil {
+		left = t.root.left.height
+	} 
+	if t.root.right != nil{
+		right = t.root.right.height 
 	}
-	p.left = r
-	r.right = left
-	return p
+	diff := left - right
+	switch {
+	case diff < -1:
+		t.left_rotate()
+		t.Rebalance()
+	case diff > -1: 
+		t.right_rotate()
+		t.Rebalance()
+	}	
+
 }
-func right_rotate(r *Node)(*Node){
-	var right,p *Node  
-	p = r.left
-	if p.right != nil {
-		right = p.right
+func(t *Tree) left_rotate(){
+	var left,pivot *Node  
+	pivot = t.root.right
+	if pivot.left != nil {
+		left = pivot.left
 	}
-	p.right = r
-	r.left = right
-	return p
+	t.root.right = left
+	pivot.left = t.root
+	t.root = pivot
+}
+func(t *Tree) right_rotate(){
+	var right,pivot *Node  
+	pivot = t.root.left
+	if pivot.right != nil {
+		right = pivot.right
+	}
+	t.root.left = right
+	pivot.right = t.root
+	t.root = pivot
 }
