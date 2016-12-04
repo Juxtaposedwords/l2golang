@@ -79,29 +79,28 @@ func(t *Tree) Rebalance() {
 	case diff < -1:
 		t.left_rotate()
 		t.Rebalance()
-	case diff > -1: 
+	case diff > 1: 
 		t.right_rotate()
 		t.Rebalance()
 	}	
 
 }
 func(t *Tree) left_rotate(){
-	var left,pivot *Node  
-	pivot = t.root.right
-	if pivot.left != nil {
-		left = pivot.left
-	}
-	t.root.right = left
-	pivot.left = t.root
-	t.root = pivot
+	n := t.root.right
+	o := t.root
+	left := n.left
+	n.left = o
+	o.right = left
+	t.root = n
+	t.root.height = 0
+	o.SetHeight()
 }
-func(t *Tree) right_rotate(){
-	var right,pivot *Node  
-	pivot = t.root.left
-	if pivot.right != nil {
-		right = pivot.right
-	}
-	t.root.left = right
-	pivot.right = t.root
-	t.root = pivot
+func(t *Tree) right_rotate(){ 
+	n := t.root.left
+	o := t.root
+	right := n.right
+	n.right = o
+	o.left = right
+	t.root = n
+	t.root.height = 0
 }
