@@ -49,26 +49,17 @@ func(n *Node) SetHeight(){
 		n.height = left + 1
 	}	
 }
-func(n *Node) Traverse()  {
+func(n *Node) Traverse(f func(*Node))  {
 	if n.left != nil {
-		n.left.Traverse()
-	}
-	// your action here
-	if n.right != nil {
-		n.right.Traverse()
-	}
-}
-func(n *Node) Traverse2(f func(*Node))  {
-	if n.left != nil {
-		n.left.Traverse2(f)
+		n.left.Traverse(f)
 	}
 	f(n)
 	if n.right != nil {
-		n.right.Traverse2(f)
+		n.right.Traverse(f)
 	}
 }
-func(t *Tree) Traverse() {
-	t.root.Traverse()
+func(t *Tree) Traverse(f func(*Node)) {
+	t.root.Traverse(f)
 }
 func(t *Tree) Rebalance() {
 	left, right := 0,0

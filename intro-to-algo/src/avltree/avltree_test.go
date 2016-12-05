@@ -19,13 +19,11 @@ func TestInsert(t *testing.T) {
 		for _, i := range(test.have){
 			tree.Insert(i)
 		}
-		//tree.Rebalance()
 		f := func(n *Node) {
 			fmt.Printf("%z\n", n.key)
 		}
-		tree.root.Traverse2(f)
 		tree.Rebalance()
-		tree.Traverse()
+		tree.Traverse(f)
 	}
 
 
