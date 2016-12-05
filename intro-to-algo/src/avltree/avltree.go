@@ -1,10 +1,9 @@
 package avltree
 import (
-	"fmt"
+//	"fmt"
 )
 type Node struct{
 	key int
-	depth int
 	height int
 	left *Node
 	right *Node
@@ -15,23 +14,24 @@ type Tree struct{
 
 func(t *Tree) Insert(k int){
 	if t.root == nil{
-		t.root = &Node{key: k, depth: 0, height: 0}
+		t.root = &Node{key: k, height: 0}
 	} else {
 		t.root.Insert(k)
+		t.Rebalance()
 	}
+
 }
 func(n *Node) Insert(k int){
 	switch {
 	case k <= n.key && n.left == nil : 
-		n.left = &Node{key: k, depth: n.depth+1, height: 0}
+		n.left = &Node{key: k, height: 1}
 	case k > n.key  && n.right == nil :
-		n.right = &Node{key: k, depth: n.depth+1, height: 0}
+		n.right = &Node{key: k, height: 1}
 	case k <= n.key  && n.left != nil : 
 		n.left.Insert(k)
 	case k > n.key  && n.right != nil :
 		n.right.Insert(k)
 	}
-
 	n.SetHeight()
 }
 func(n *Node) SetHeight(){
@@ -53,16 +53,20 @@ func(n *Node) Traverse()  {
 	if n.left != nil {
 		n.left.Traverse()
 	}
-
-	fmt.Printf("Node: %d\n", n.key)
-	fmt.Printf("   Left Node: %z\n", n.left)
-	fmt.Printf("   Right Node: %z\n", n.right)
-
+	// your action here
 	if n.right != nil {
 		n.right.Traverse()
 	}
 }
-
+func(n *Node) Traverse2(f func(*Node))  {
+	if n.left != nil {
+		n.left.Traverse2(f)
+	}
+	f(n)
+	if n.right != nil {
+		n.right.Traverse2(f)
+	}
+}
 func(t *Tree) Traverse() {
 	t.root.Traverse()
 }
@@ -85,6 +89,7 @@ func(t *Tree) Rebalance() {
 	}	
 
 }
+
 func(t *Tree) left_rotate(){
 	n := t.root.right
 	o := t.root

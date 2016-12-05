@@ -11,7 +11,7 @@ func TestInsert(t *testing.T) {
 		want []int
 		desc string
 	}{
-  		{[]int{1, 2, 3, 4, 5}, []int{1, 2, 2, 3, 3, 4, 4, 5, 7}, "Traverse Works"},
+  		{[]int{1, 2, 3,4 }, []int{1, 2, 2, 3, 3, 4, 4, 5, 7}, "Traverse Works"},
   	//	{[]int{5, 4, 3, 3, 2, 2, 1}, []int{1, 2, 2, 3, 3, 4, 5}, "reversed"},
 	}
 	for _, test := range(tcs){
@@ -20,12 +20,12 @@ func TestInsert(t *testing.T) {
 			tree.Insert(i)
 		}
 		//tree.Rebalance()
+		f := func(n *Node) {
+			fmt.Printf("%z\n", n.key)
+		}
+		tree.root.Traverse2(f)
+		tree.Rebalance()
 		tree.Traverse()
-		tree.left_rotate()
-		fmt.Printf("DID A ROTATE\n\n")
-		fmt.Printf("The root is: %z\n", tree.root)
-		tree.Traverse()
-
 	}
 
 
