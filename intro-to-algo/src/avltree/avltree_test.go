@@ -20,10 +20,11 @@ func TestInsert(t *testing.T) {
 			tree.Insert(i)
 		}
 		f := func(n *Node) {
-			fmt.Printf("%z\n", n.key)
+			fmt.Printf("%z\n", n)
 		}
 		tree.Rebalance()
 		tree.Traverse(f)
+
 	}
 
 
