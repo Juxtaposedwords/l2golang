@@ -5,6 +5,7 @@ import (
 type Node struct{
 	key int
 	height int
+	depth int
 	left *Node
 	right *Node
 }
@@ -14,19 +15,19 @@ type Tree struct{
 
 func(t *Tree) Insert(k int){
 	if t.root == nil{
-		t.root = &Node{key: k, height: 0}
+		t.root = &Node{key: k, height: 0, depth: 1}
 	} else {
 		t.root.Insert(k)
-		t.Rebalance()
+		//t.Rebalance()
 	}
 
 }
 func(n *Node) Insert(k int){
 	switch {
 	case k <= n.key && n.left == nil : 
-		n.left = &Node{key: k, height: 1}
+		n.left = &Node{key: k, height: 1, depth: n.depth +1}
 	case k > n.key  && n.right == nil :
-		n.right = &Node{key: k, height: 1}
+		n.right = &Node{key: k, height: 1, depth: n.depth +1}
 	case k <= n.key  && n.left != nil : 
 		n.left.Insert(k)
 	case k > n.key  && n.right != nil :
@@ -35,6 +36,21 @@ func(n *Node) Insert(k int){
 	n.SetHeight()
 }
 func(n *Node) SetHeight(){
+	left, right := -1, -1
+	if n.left != nil {
+		left = n.left.height
+	}
+	if n.right != nil {
+		right = n.right.height
+	}
+
+	if left <= right {
+		n.height = right + 1
+	} else if left > right {
+		n.height = left + 1
+	}	
+}
+func(n *Node) SetDepth(){
 	left, right := -1, -1
 	if n.left != nil {
 		left = n.left.height
@@ -79,7 +95,16 @@ func(t *Tree) Rebalance() {
 		t.right_rotate()
 		t.Rebalance()
 	}	
-
+	t.root.depth = 0
+	d := func(n *Node) {
+		if n.left != nil{
+			n.left.depth = n.depth + 1 
+		}
+		if n.right != nil{
+			n.right.depth = n.depth + 1
+		}
+	}
+	t.root.Traverse(d)
 }
 
 func(t *Tree) left_rotate(){
