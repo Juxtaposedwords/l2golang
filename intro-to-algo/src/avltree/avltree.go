@@ -81,28 +81,40 @@ func(t *Tree) Rebalance() {
 
 }
 
+func(t *Tree) left_rotate(){
+	x := t.root.right
+	t.root.left_rotate()
+	t.root = x
+	t.root.left.SetHeight()
+	t.root.right.SetHeight()
+}
+func(t *Tree) right_rotate(){
+	x := t.root.left
+	t.root.right_rotate()
+	t.root = x
+	t.root.left.SetHeight()
+	t.root.right.SetHeight()
+}
 // Left rotates move the previously right child node to being the 
 // root node
-//  1. Store the new and old root as n and o
+//  1. Store the new and old root as r and o
 //  2. Store the left child (l) of the new root, as if it is not nil it will need to be preserved
 
-func(t *Tree) left_rotate(){
-	n := t.root.right
-	o := t.root
-	l := n.left
-	n.left = o
-	o.right = l
-	t.root = n
+func(n *Node) left_rotate(){
+	r := n.right
+	o := n
+	left := r.left
+	r.left = o
+	o.right = left
 }
 // Right Rotates move the previously left child node to being the
 // root node
-//  1. Store the new and old root as n and o
+//  1. Store the new and old root as  and o
 //  2. Store the right child(r) of the new root, as if it is not nil it will need to be preserved
-func(t *Tree) right_rotate(){ 
-	n := t.root.left
-	o := t.root
-	r := n.right
-	n.right = o
-	o.left = r
-	t.root = n
+func(n *Node) right_rotate(){ 
+	r := n.left
+	o := n
+	right := r.right
+	r.right = o
+	o.left = right
 }
