@@ -59,22 +59,6 @@ func(n *Node) Traverse(f func(*Node))  {
 	}
 }
 
-func(n *Node) MaxDepth() (int){
-	left, right := 1,1
-	if n.left != nil {
-		left = n.left.MaxDepth()
-	}
-	if n.right != nil {
-		right = n.right.MaxDepth()
-	}
-	if left <= right {
-		return left + 1
-	} else if left > right {
-		return right + 1
-	}
-	return 0
-}
-
 func(t *Tree) Traverse(f func(*Node)) {
 	t.root.Traverse(f)
 }
