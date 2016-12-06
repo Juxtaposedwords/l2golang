@@ -11,7 +11,7 @@ func TestInsert(t *testing.T) {
 		want []int
 		desc string
 	}{
-  		{[]int{1, 2, 3,4,4,2, 5, 6 }, []int{1, 2, 2, 3, 3, 4, 4, 5, 7}, "Traverse Works"},
+  		{[]int{1,2,3,4,2,1 }, []int{1, 2, 2, 3, 3, 4, 4, 5, 7}, "Traverse Works"},
   	//	{[]int{5, 4, 3, 3, 2, 2, 1}, []int{1, 2, 2, 3, 3, 4, 5}, "reversed"},
 	}
 	for _, test := range(tcs){
@@ -22,14 +22,13 @@ func TestInsert(t *testing.T) {
 		f := func(n *Node) {
 			var s string
 			for i:=0; i <n.depth; i ++{
-				s +=" "
+				s +="="
 			}
-			fmt.Printf("%s%z\n", s, n)
-			//fmt.Printf("%d\n  depth:%d\n  height:%d\n  left: %z\n  right: %z\n", n.key, n.depth,n.height, n.left, n.right)
+			//fmt.Printf("%skey: %d\n  depth:%d\n  height:%d\n  left: %z\n  right: %z\n",s, n.key, n.depth,n.height, n.left, n.right)
+			fmt.Printf("%s>(%d)\n",s,n.key)
 		}
 		tree.Rebalance()
 		tree.Traverse(f)
-
 	}
 
 
