@@ -3,6 +3,7 @@ package llShuffle
 import (
 	"testing"
 	"reflect"
+	"fmt"
 )
 
 func Test_shuffle(t *testing.T){
@@ -15,16 +16,15 @@ func Test_shuffle(t *testing.T){
 		t.Errorf("No shuffle,\n  have: %z\n  want: %z\n", have,want)
 	}
 }
-/*func Test_edc_shuffle(t *testing.T) {
-	tcs := []struct{
+func Test_edc_shuffle(t *testing.T) {
+/*	tcs := []struct{
 		have int
 		want []node
 		desc string
 		}{ 
 			{25, }
 		}
-	}
-	x := CreateLinkedList(50)
-	x.shuffle()
-	x.printer()
-}*/
+	}*/
+	x := CreateDoublyLinkedList(50)
+	x.prev.reverseTraverseList(func(n *node) { fmt.Printf("%d\n", n.label)})
+}

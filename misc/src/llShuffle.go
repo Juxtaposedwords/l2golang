@@ -6,6 +6,7 @@ import (
 type node struct{
 	label int
 	next *node
+	prev *node
 }
 // Created a class so we add some methods specifically
 type nodeList []*node
@@ -21,6 +22,19 @@ func CreateLinkedList(a int) (*node){
 		last = swap
 	}
 	swap.next = first
+	return first
+}
+func CreateDoublyLinkedList(a int) (*node){
+	var first,last, swap *node
+	first = &node{label: 1}
+	last = first
+	for i:=2; i <= a; i++{
+		swap = &node{label: i, prev: last}
+		last.next = swap
+		last = swap
+	}
+	swap.next = first
+	first.prev = swap
 	return first
 }
 
@@ -79,4 +93,17 @@ func (h *node)traverseList(f func(*node)){
 		}
 	}
 
+}
+func (h *node)reverseTraverseList(f func(*node)){
+	if h.prev == nil{
+		return
+	}
+	curr := h
+	for {
+		f(curr)
+		curr = curr.prev
+		if curr == h {
+			break
+		}
+	}
 }
