@@ -48,11 +48,41 @@ func (h *node)toNodeList() (nodeList){
 	return result
 }
 
+func (h *node)visitMap()(map[int]bool){
+	r := make(map[int]bool)
+	f := func(n *node){
+		r[n.label] = true
+	}
+	h.traverseList(f)
+	return r
+}
+
 //Shuffle the linked list from just the head node
 //	Makes a list of the cycle, then shuffles the nodes
 func (head *node)shuffle(){
 	s  := head.toNodeList()
 	s.shuffle()
+}
+
+func (n *node)delete(){
+	var prev *node
+	f := func(k *node) {
+			if k.next == n {
+				prev = k
+			}
+		}
+	n.traverseList(f)
+	prev.next = n.next
+}
+func (n *node)add(a int){
+	var nn *node
+	if n.prev != nil{
+		nn =  &node{label: a, prev: n, next: n.next}		
+		n.next.prev = nn		
+	} else {
+		nn =  &node{label: a, next: n.next}		
+	}
+	n.next = nn
 }
 
 //Shuffles the order of the nodeList
