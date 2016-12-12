@@ -59,7 +59,7 @@ func (h *node)shuffle(){
 }
 
 func (h *node)printer(){
-	h.traverse(func(n *node){fmt.Printf("label: %s\n", n.label)})
+	h.traverse(func(n *node){fmt.Printf("label: %z\n", n.label)})
 }
 
 func (h *node)visitMap()(map[int]bool){

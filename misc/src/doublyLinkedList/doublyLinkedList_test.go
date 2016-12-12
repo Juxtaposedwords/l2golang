@@ -21,7 +21,7 @@ func Test_add( t *testing.T){
 	a.add(9)
 	have := a.listLength()
 	desc := "Add was unsuccessful"
-	if ! reflect.DeepEqual(want, have){
+	if have != want {
 		t.Errorf("have: %z   want: %z    Description: %s\n",have, want, desc)
 	}
 }
