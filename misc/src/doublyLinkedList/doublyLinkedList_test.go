@@ -1,28 +1,40 @@
 package doublyLinkedList
 import (
 	"testing"
-	"reflect"
+//	"reflect"
 )
 func Test_delete( t *testing.T){
 	a := CreateLinkedList(5)	
-	want := a.visitMap()
-	delete(want, 1)
-	next  := a.next
+	b := a.next
 	a.delete()
-	have := next.visitMap()
-	desc := "Delete was unsuccessful"
-	if ! reflect.DeepEqual(want, have){
-		t.Errorf("\nhave: %z\nwant: %z\nDescription: %s\n",have, want, desc)
+	have := b.visitMap()
+	want := 4
+	visited := 0
+	for k, v := range have{
+		if v > 1 {
+			t.Errorf("Node %z was visited %d times, not 1 time", k, v)
+		}
+		visited +=1
+	}
+	if visited != want {
+		t.Errorf("You visited %d nodes when you should have visited %d nodes", visited, want)
+
 	}
 }
 func Test_add( t *testing.T){
 	a := CreateLinkedList(5)
+	a.add()
+	have := a.visitMap()
 	want := 6
-	a.add(9)
-	have := a.listLength()
-	desc := "Add was unsuccessful"
-	if have != want {
-		t.Errorf("have: %z   want: %z    Description: %s\n",have, want, desc)
+	visited :=0
+	for k,v := range have{
+		if v > 1 {
+			t.Errorf("Node %z was visisted %d times, not 1 time", k,v )
+		}
+		visited +=1
+	}
+	if visited != want{
+		t.Errorf("The list has %d unique nodes, not %d", visited,want)
 	}
 }
 

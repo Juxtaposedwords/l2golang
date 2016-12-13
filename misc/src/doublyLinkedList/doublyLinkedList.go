@@ -5,7 +5,7 @@ import (
 )
 
 type node struct{
-	label int
+	label string
 	next *node
 	prev *node
 }
@@ -14,10 +14,10 @@ type nodeList []*node
 
 func CreateLinkedList(c int) (*node){
 	var first, last, swap *node
-	first = &node{label: 1}
+	first = &node{}
 	last = first
-	for i:=2; i<= c; i++{
-		swap = &node{label:i, prev: last}
+	for i:=2; i<=c; i++{
+		swap = &node{prev: last}
 		last.next = swap
 		last = swap
 	}
@@ -26,8 +26,8 @@ func CreateLinkedList(c int) (*node){
 	return first
 }
 
-func (n *node)add(a int){
-	nn := &node{label: a, prev: n, next: n.next}
+func (n *node)add(){
+	nn := &node{prev: n, next: n.next}
 	n.next.prev = nn
 	n.next = nn
 }
@@ -59,13 +59,13 @@ func (h *node)shuffle(){
 }
 
 func (h *node)printer(){
-	h.traverse(func(n *node){fmt.Printf("label: %z\n", n.label)})
+	h.traverse(func(n *node){fmt.Printf("node: %z\n", n)})
 }
 
-func (h *node)visitMap()(map[int]bool){
-	r := make(map[int]bool)
+func (h *node)visitMap()(map[*node]int){
+	r := make(map[*node]int)
 	f := func(n *node){
-		r[n.label] = true
+		r[n] += 1
 	}
 	h.traverse(f)
 	return r
