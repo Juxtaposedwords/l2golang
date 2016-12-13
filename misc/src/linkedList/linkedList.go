@@ -5,17 +5,17 @@ import (
 )
 
 type node struct{
-	label int
+	label string
 	next *node
 }
 type nodeList []*node
 
 func CreateLinkedList(c int) (*node){
 	var first, last, swap *node
-	first = &node{label:1}
+	first = &node{}
 	last = first
 	for i:=2; i <= c; i++{
-		swap = &node{label:i}
+		swap = &node{}
 		last.next = swap
 		last = swap
 	}
@@ -32,8 +32,8 @@ func (h *node)toNodeList()(nodeList){
 	return result
 }
 
-func (n *node)add(a int){
-	nn := &node{label: a, next: n.next}
+func (n *node)add(){
+	nn := &node{next: n.next}
 	n.next = nn
 }
 
@@ -61,10 +61,10 @@ func (h *node)listLength()(int){
 	return i
 }
 
-func (h *node)visitMap()(map[int]bool){
-	r := make(map[int]bool)
+func (h *node)visitMap()(map[*node]int){
+	r := make(map[*node]int)
 	f := func(n *node){
-		r[n.label] = true
+		r[n] +=1 
 	}
 	h.traverse(f)
 	return r

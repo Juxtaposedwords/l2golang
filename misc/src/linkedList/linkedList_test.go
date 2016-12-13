@@ -1,27 +1,38 @@
 package linkedList
 import (
 	"testing"
-	"reflect"
+//	"reflect"
 )
 func Test_delete( t *testing.T){
 	a := CreateLinkedList(5)
-	want := a.visitMap()
-	delete(want, 1)
-	next := a.next
-	a.delete()
-	have := next.visitMap()
-	desc := "Delete was unsucessful"	
-	if ! reflect.DeepEqual(want, have){
-		t.Errorf("\nhave: %z\nwant: %z\nDescription: %s\n",have, want, desc)
+	b := a.next
+	b.delete()
+	have := a.visitMap()
+	visited := 0
+	want := 4
+	for k , v := range have {
+		if v > 1{
+			t.Errorf("Node %z was visited %d, not 1 time", k, v)
+		}
+		visited +=1
+	}
+	if visited != want {
+		t.Errorf("Incorrect amount of nodes visited.\n VisitMap: %z\n",have)
 	}
 }
 func Test_add( t *testing.T){
 	a := CreateLinkedList(5)
+	a.add()
+	have := a.visitMap()
 	want := 6
-	a.add(9)
-	have := a.listLength()
-	desc := "Add was unsucessful"
-	if have != want{
-		t.Errorf("\nhave: %z\nwant:%z\nDescription: %s\n",have,want, desc)
+	visited := 0
+	for k , v := range have {
+		if v > 1{
+			t.Errorf("Node %z was visited %d, not 1 time", k, v)
+		}
+		visited +=1
+	}
+	if visited != want {
+		t.Errorf("You visisted %d when you should have visited", visited, want)
 	}
 }
