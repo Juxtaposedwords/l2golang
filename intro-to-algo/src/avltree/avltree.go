@@ -51,19 +51,16 @@ func(n *Node) SetHeight(){
 	}	
 }
 func(n *Node) SetDepth(){
-	left, right := -1, -1
-	if n.left != nil {
-		left = n.left.height
+	d := n.depth
+	f := func(k *Node){
+		if n.left != nil{
+			n.left.height = d + 1
+		}
+		if n.right != nil{
+			n.right.height = d + 1
+		}
 	}
-	if n.right != nil {
-		right = n.right.height
-	}
-
-	if left <= right {
-		n.height = right + 1
-	} else if left > right {
-		n.height = left + 1
-	}	
+	n.Traverse(f)	
 }
 func(n *Node) Traverse(f func(*Node))  {
 	if n.left != nil {
