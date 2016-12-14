@@ -35,6 +35,7 @@ func(n *Node) Insert(k int){
 	}
 	n.SetHeight()
 }
+// A node's height is the greater of it's two children + 1
 func(n *Node) SetHeight(){
 	left, right := -1, -1
 	if n.left != nil {
@@ -50,14 +51,15 @@ func(n *Node) SetHeight(){
 		n.height = left + 1
 	}	
 }
+
+// A node's depth is it's distance from the root node
 func(n *Node) SetDepth(){
-	d := n.depth
 	f := func(k *Node){
 		if n.left != nil{
-			n.left.height = d + 1
+			n.left.depth = n.depth + 1
 		}
 		if n.right != nil{
-			n.right.height = d + 1
+			n.right.depth = n.depth + 1
 		}
 	}
 	n.Traverse(f)	
