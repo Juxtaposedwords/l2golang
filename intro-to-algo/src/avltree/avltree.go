@@ -1,6 +1,6 @@
 package avltree
 import (
-//	"fmt"
+	"fmt"
 )
 type Node struct{
 	key int
@@ -15,7 +15,7 @@ type Tree struct{
 
 func(t *Tree) Insert(k int){
 	if t.root == nil{
-		t.root = &Node{key: k, height: 0, depth: 1}
+		t.root = &Node{key: k, height: 0, depth: 0}
 	} else {
 		t.root.Insert(k)
 		//t.Rebalance()
@@ -34,6 +34,7 @@ func(n *Node) Insert(k int){
 		n.right.Insert(k)
 	}
 	n.SetHeight()
+	n.Rebalance()
 }
 // A node's height is the greater of it's two children + 1
 func(n *Node) SetHeight(){
@@ -52,7 +53,7 @@ func(n *Node) SetHeight(){
 	}	
 }
 
-// A node's depth is it's distance from the root node
+// A node's depth is the shortest number of connections to the root
 func(n *Node) SetDepth(){
 	f := func(k *Node){
 		if n.left != nil{
@@ -78,47 +79,30 @@ func(t *Tree) Traverse(f func(*Node)) {
 	t.root.Traverse(f)
 }
 func(t *Tree) Rebalance() {
+	t.root = t.root.Rebalance()
+}
+func(n *Node) Rebalance() (*Node){
 	left, right := 0,0
-	if t.root.left != nil {
-		left = t.root.left.height
+	if n.left != nil {
+		n.left.Rebalance()
+		left = n.left.height
 	} 
-	if t.root.right != nil{
-		right = t.root.right.height 
+	if n.right != nil{
+		right = n.right.height 
 	}
 	diff := left - right
+	a := n
 	switch {
 	case diff < -1:
-		t.left_rotate()
-		t.Rebalance()
+		a = n.right
+		n.left_rotate()
 	case diff > 1: 
-		t.right_rotate()
-		t.Rebalance()
+		a = n.left
+		n.right_rotate()
 	}	
-	t.root.depth = 0
-	d := func(n *Node) {
-		if n.left != nil{
-			n.left.depth = n.depth + 1 
-		}
-		if n.right != nil{
-			n.right.depth = n.depth + 1
-		}
-	}
-	t.root.Traverse(d)
-}
-
-func(t *Tree) left_rotate(){
-	x := t.root.right
-	t.root.left_rotate()
-	t.root = x
-	t.root.left.SetHeight()
-	t.root.right.SetHeight()
-}
-func(t *Tree) right_rotate(){
-	x := t.root.left
-	t.root.right_rotate()
-	t.root = x
-	t.root.left.SetHeight()
-	t.root.right.SetHeight()
+	n.SetDepth()
+	fmt.Printf("Returning %d at node %d\n",n.key,a.key)
+	return a
 }
 // Left rotates move the previously right child node to being the 
 // root node
