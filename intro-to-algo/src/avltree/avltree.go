@@ -17,24 +17,23 @@ func(t *Tree) Insert(k int){
 	if t.root == nil{
 		t.root = &Node{key: k, height: 0, depth: 0}
 	} else {
-		t.root.Insert(k)
+		t.root.Insert(k, t)
 		//t.Rebalance()
 	}
-
 }
-func(n *Node) Insert(k int){
+func(n *Node) Insert(k int, t *Tree){
 	switch {
-	case k <= n.key && n.left == nil : 
+	case k < n.key && n.left == nil : 
 		n.left = &Node{key: k, height: 1, depth: n.depth +1}
-	case k > n.key  && n.right == nil :
+	case k >= n.key  && n.right == nil :
 		n.right = &Node{key: k, height: 1, depth: n.depth +1}
-	case k <= n.key  && n.left != nil : 
-		n.left.Insert(k)
-	case k > n.key  && n.right != nil :
-		n.right.Insert(k)
+	case k < n.key  && n.left != nil : 
+		n.left.Insert(k,t)
+	case k >= n.key  && n.right != nil :
+		n.right.Insert(k,t )
 	}
 	n.SetHeight()
-	n.Rebalance()
+	n.Rebalance(t)
 }
 // A node's height is the greater of it's two children + 1
 func(n *Node) SetHeight(){
@@ -46,9 +45,9 @@ func(n *Node) SetHeight(){
 		right = n.right.height
 	}
 
-	if left <= right {
+	if left < right {
 		n.height = right + 1
-	} else if left > right {
+	} else if left >= right {
 		n.height = left + 1
 	}	
 }
@@ -79,19 +78,18 @@ func(t *Tree) Traverse(f func(*Node)) {
 	t.root.Traverse(f)
 }
 func(t *Tree) Rebalance() {
-	t.root = t.root.Rebalance()
+	t.root = t.root.Rebalance(t)
 }
-func(n *Node) Rebalance() (*Node){
+func(n *Node) Rebalance(t *Tree) (*Node){
 	left, right := 0,0
 	if n.left != nil {
-		n.left.Rebalance()
 		left = n.left.height
 	} 
 	if n.right != nil{
 		right = n.right.height 
 	}
 	diff := left - right
-	a := n
+	a := t.root
 	switch {
 	case diff < -1:
 		a = n.right
@@ -100,6 +98,7 @@ func(n *Node) Rebalance() (*Node){
 		a = n.left
 		n.right_rotate()
 	}	
+	n.SetHeight()
 	n.SetDepth()
 	fmt.Printf("Returning %d at node %d\n",n.key,a.key)
 	return a

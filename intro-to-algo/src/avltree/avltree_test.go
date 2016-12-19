@@ -39,21 +39,22 @@ func TestInsert(t *testing.T) {
 }
 func TestNodeInsert(t *testing.T){
 	n := &Node{ key: 1}
+	tt := &Tree{}
 	if n.right != nil {
 		t.Errorf("Node Class: Left key should be nil on instantiation")
 	}
-	n.Insert(2)
+	n.Insert(2,tt)
 	if n.left != nil {
 		t.Errorf("Node Class: Left key should be nil on instantiation")
 	}
-	n.Insert(1)
+	n.Insert(1,tt)
 	if n.right.key != 2 {
 		t.Errorf("Node Class: Failed to insert correctly to the right")
 	}
 	if n.left.key != 1 {
 		t.Errorf("Node Class: Faield to insert correctly to the left")	
 	}
-	n.Insert(1)
+	n.Insert(1,tt)
 	if n.left.left.key != 1 {
 		t.Errorf("Node Class: Failed to insert correctly to the left's child left value")	
 	}
