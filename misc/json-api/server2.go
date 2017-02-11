@@ -27,7 +27,7 @@ func apiHandler(w http.ResponseWriter, r *http.Request) {
 func someApiFunction(r *http.Request) ([]byte, error) {
 	x := map[string]string{
 		"Claw":           "Maloy is crazy for Claw.",
-		"Shadowy Mentor": "Maloy is frustrating Robert by taking too long on his homework.",
+		"Shadowy Mentor": "Maloy is frustrating the mentor by taking too long on his homework.",
 		"Golang":         "Maloy is struggle-busing Go.",
 	}
 	if val, ok := x[r.URL.Path[len("/api/"):]]; ok {
