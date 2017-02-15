@@ -25,12 +25,12 @@ func magicHandler(f charComp) func(w http.ResponseWriter, r *http.Request) {
 		b, err := f(r)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
-			log.Fatal("There was an error loading : %s", err)
+			log.Printf("There was an error loading : %s", err)
 			return
 		}
 		if _, err := w.Write(b); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
-			log.Fatal("There was an error writing: %s", err)
+			log.Printf("There was an error writing: %s", err)
 		}
 	}
 }

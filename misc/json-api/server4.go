@@ -16,11 +16,13 @@ type spell struct {
 func spellHandler(w http.ResponseWriter, r *http.Request) {
 	b, err := spellList(r)
 	if err != nil {
+		log.Printf("There was an error loading Spells: %s", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 	if _, err := w.Write(b); err != nil {
-		log.Fatal("There was an error writing: %s", err)
+		log.Printf("There was an error writing: %s", err)
+		w.WriteHeader(http.StatusInternalServerError)
 	}
 }
 func spellList(r *http.Request) ([]byte, error) {

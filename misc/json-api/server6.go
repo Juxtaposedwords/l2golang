@@ -29,6 +29,7 @@ func wrapApiFunc(f apiFunc) func(http.ResponseWriter, *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		if _, err := w.Write(b); err != nil {
 			log.Printf("Error writing response: %s", err)
+			w.WriteHeader(http.StatusInternalServerError)
 		}
 	}
 }
@@ -53,4 +54,3 @@ func main() {
 	log.Fatal(http.ListenAndServe(":"+port, nil))
 
 }
-

@@ -11,11 +11,13 @@ func fatCatHandler(w http.ResponseWriter, r *http.Request) {
 	b, err := fatCatFacts(r)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
+		log.Printf("There was an error loading Cat Facts: %s", err)
 		return
 	}
 
 	if _, err := w.Write(b); err != nil {
-		log.Fatal("There was an error writing\n Error: %s", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		log.Printf("There was an error writing\n Error: %s", err)
 	}
 }
 func fatCatFacts(r *http.Request) ([]byte, error) {

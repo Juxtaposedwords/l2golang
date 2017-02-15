@@ -16,10 +16,12 @@ func apiHandler(w http.ResponseWriter, r *http.Request) {
 	b, err := someApiFunction(r)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
+		log.Errorf("Error reading ApiFunction: %s", err)
 		return
 	}
 	if _, err := w.Write(b); err != nil {
-		log.Printf("error writing resposne: %s", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		log.Errorf("error writing resposne: %s", err)
 	}
 
 }
