@@ -41,26 +41,23 @@ func saveSpells(s []spell) error {
 	return nil
 }
 
-//http.HandleFunc("/api/spells/", magicHandler(spells.ListLevelSpells))
-//http.HandleFunc("/api/spell/", magicHandler(spells.GetSpell))
+type handler func(*http.Request) ([]byte, error)
+
+var dispatch = map[string]handler{
+	`^/api/spells$`:     ListSpells,
+	`^/api/spells/add$`: AddSpell,
+	`^/api/spells/\d+$`: ListLevelSpells,
+}
 
 func Dispatcher(r *http.Request) ([]byte, error) {
 	p := r.URL.Path
-	s := []struct {
-		pattern string
-		handler func(*http.Request) ([]byte, error)
-	}{
-		{`^/api/spells$`, ListSpells},
-		{`^/api/spells/add$`, AddSpell},
-		{`^/api/spells/\d+$`, ListLevelSpells},
-	}
-	for _, e := range s {
-		ok, err := regexp.MatchString(e.pattern, p)
+	for k, v := range dispatch {
+		ok, err := regexp.MatchString(k, p)
 		if err != nil {
 			return nil, err
 		}
 		if ok {
-			return e.handler(r)
+			return v(r)
 		}
 	}
 	return nil, myHTTP.NotFoundErr
