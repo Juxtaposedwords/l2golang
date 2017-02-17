@@ -25,8 +25,7 @@ func TestDispatcher(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		r := &http.Request{}
-		r.URL.Path = tt.url
+		r, err := http.NewRequest("GET", tt.url, nil)
 		dispatch[tt.url] = tt.h
 		got, err := Dispatcher(r)
 		if err != nil {
