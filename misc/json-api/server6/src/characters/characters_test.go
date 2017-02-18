@@ -1,4 +1,4 @@
-package spells
+package characters
 
 import (
 	"net/http"
@@ -13,20 +13,20 @@ func TestDispatcher(t *testing.T) {
 		want string
 	}{
 		{
-			"/api/spells",
-			listSpellPattern,
+			"/api/characters",
+			listCharPattern,
 			func(*http.Request) ([]byte, error) { return []byte("one"), nil },
 			"one",
 		},
 		{
-			"/api/spells/add",
-			addSpellPattern,
+			"/api/characters/add",
+			addCharPattern,
 			func(*http.Request) ([]byte, error) { return []byte("two"), nil },
 			"two",
 		},
 		{
-			"/api/spells/2",
-			listSpellLevelPattern,
+			"/api/characters/2",
+			listCharLevelPattern,
 			func(*http.Request) ([]byte, error) { return []byte("three"), nil },
 			"three",
 		},

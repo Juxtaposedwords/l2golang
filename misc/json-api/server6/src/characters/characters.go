@@ -3,8 +3,10 @@ package characters
 import (
 	"encoding/json"
 	"fmt"
+	"myHTTP"
 	"myJSON"
 	"net/http"
+	"regexp"
 	"strconv"
 )
 
@@ -12,6 +14,34 @@ type character struct {
 	Name  string `json: "name"`
 	Race  string `json: "race"`
 	Level int    `json: "level"`
+}
+
+const (
+	listCharPattern      = `^/api/characters$`
+	addCharPattern       = `^/api/characters/add$`
+	listCharLevelPattern = `^/api/characters/\d+$`
+)
+
+type handler func(*http.Request) ([]byte, error)
+
+var dispatch = map[string]handler{
+	listCharPattern:      listChars,
+	addCharPattern:       AddCharacter,
+	listCharLevelPattern: listLevelChars,
+}
+
+func Dispatcher(r *http.Request) ([]byte, error) {
+	p := r.URL.Path
+	for k, v := range dispatch {
+		ok, err := regexp.MatchString(k, p)
+		if err != nil {
+			return nil, err
+		}
+		if ok {
+			return v(r)
+		}
+	}
+	return nil, myHTTP.NotFoundErr
 }
 
 func loadChars() ([]character, error) {
@@ -34,11 +64,11 @@ func saveChars(c []character) error {
 	return myJSON.SaveJSON("chracters", b)
 }
 
-func ListChars(r *http.Request) ([]byte, error) {
+func listChars(r *http.Request) ([]byte, error) {
 	return myJSON.LoadJSON("characters")
 }
 
-func GetChar(r *http.Request) ([]byte, error) {
+func getChar(r *http.Request) ([]byte, error) {
 	x, err := loadChars()
 	if err != nil {
 		return nil, err
@@ -72,4 +102,7 @@ func listLevelChars(r *http.Request) ([]byte, error) {
 	}
 	return []byte(fmt.Sprintf("There are no characters at level %d ...yet", s)), nil
 
+}
+func AddCharacter(r *http.Request) ([]byte, error) {
+	return nil, nil
 }

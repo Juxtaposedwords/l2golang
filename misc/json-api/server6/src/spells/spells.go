@@ -16,6 +16,33 @@ type spell struct {
 	Name        string `json: "name"`
 	Description string `json: "description"`
 }
+type handler func(*http.Request) ([]byte, error)
+
+const (
+	listSpellPattern      = `^/api/spells$`
+	addSpellPattern       = `^/api/spells/add$`
+	listSpellLevelPattern = `^/api/spells/\d+$`
+)
+
+var dispatch = map[string]handler{
+	listSpellPattern:      ListSpells,
+	addSpellPattern:       AddSpell,
+	listSpellLevelPattern: ListLevelSpells,
+}
+
+func Dispatcher(r *http.Request) ([]byte, error) {
+	p := r.URL.Path
+	for k, v := range dispatch {
+		ok, err := regexp.MatchString(k, p)
+		if err != nil {
+			return nil, err
+		}
+		if ok {
+			return v(r)
+		}
+	}
+	return nil, myHTTP.NotFoundErr
+}
 
 func LoadSpells() ([]spell, error) {
 	b, err := myJSON.LoadJSON("spells")
@@ -39,28 +66,6 @@ func saveSpells(s []spell) error {
 		return err
 	}
 	return nil
-}
-
-type handler func(*http.Request) ([]byte, error)
-
-var dispatch = map[string]handler{
-	`^/api/spells$`:     ListSpells,
-	`^/api/spells/add$`: AddSpell,
-	`^/api/spells/\d+$`: ListLevelSpells,
-}
-
-func Dispatcher(r *http.Request) ([]byte, error) {
-	p := r.URL.Path
-	for k, v := range dispatch {
-		ok, err := regexp.MatchString(k, p)
-		if err != nil {
-			return nil, err
-		}
-		if ok {
-			return v(r)
-		}
-	}
-	return nil, myHTTP.NotFoundErr
 }
 
 func ListSpells(r *http.Request) ([]byte, error) {
