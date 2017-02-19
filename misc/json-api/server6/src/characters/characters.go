@@ -20,6 +20,7 @@ const (
 	listCharPattern      = `^/api/characters$`
 	addCharPattern       = `^/api/characters/add$`
 	listCharLevelPattern = `^/api/characters/\d+$`
+	URLpath              = "/api/characters/"
 )
 
 type handler func(*http.Request) ([]byte, error)
@@ -32,6 +33,7 @@ var dispatch = map[string]handler{
 
 func Dispatcher(r *http.Request) ([]byte, error) {
 	p := r.URL.Path
+	fmt.Printf("%s\n, p")
 	for k, v := range dispatch {
 		ok, err := regexp.MatchString(k, p)
 		if err != nil {
@@ -73,7 +75,7 @@ func getChar(r *http.Request) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	char := r.URL.Path[len("/api/character/"):]
+	char := r.URL.Path[len(URLpath):]
 	for _, e := range x {
 		if e.Name == char {
 			return json.Marshal(e)
@@ -87,7 +89,7 @@ func listLevelChars(r *http.Request) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	s, err := strconv.Atoi(r.URL.Path[len("/api/characters/"):])
+	s, err := strconv.Atoi(r.URL.Path[len(URLpath):])
 	if err != nil {
 		return nil, err
 	}

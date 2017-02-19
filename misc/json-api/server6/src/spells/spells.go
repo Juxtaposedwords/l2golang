@@ -3,6 +3,7 @@ package spells
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"myHTTP"
 	"myJSON"
 	"net/http"
@@ -21,7 +22,7 @@ type handler func(*http.Request) ([]byte, error)
 const (
 	listSpellPattern      = `^/api/spells$`
 	addSpellPattern       = `^/api/spells/add$`
-	listSpellLevelPattern = `^/api/spells/\d+$`
+	listSpellLevelPattern = `^/api/spells/[\d]+$`
 )
 
 var dispatch = map[string]handler{
@@ -34,10 +35,12 @@ func Dispatcher(r *http.Request) ([]byte, error) {
 	p := r.URL.Path
 	for k, v := range dispatch {
 		ok, err := regexp.MatchString(k, p)
+
 		if err != nil {
 			return nil, err
 		}
 		if ok {
+			log.Printf("%s", ok)
 			return v(r)
 		}
 	}
@@ -74,11 +77,13 @@ func ListSpells(r *http.Request) ([]byte, error) {
 
 func ListLevelSpells(r *http.Request) ([]byte, error) {
 	t, err := LoadSpells()
+	fmt.Printf("%s", t)
 	if err != nil {
 		return nil, err
 	}
 
 	s, err := strconv.Atoi(r.URL.Path[len("/api/spells/"):])
+
 	if err != nil {
 		return nil, err
 	}
@@ -109,29 +114,28 @@ func GetSpell(r *http.Request) ([]byte, error) {
 }
 
 func AddSpell(r *http.Request) ([]byte, error) {
-	_, err := LoadSpells()
+	t, err := LoadSpells()
 	if err != nil {
 		return nil, err
 	}
-	if r.Method != "POST" {
+	if err := r.ParseForm(); err != nil {
 		return nil, fmt.Errorf("Attempted to GET, not PUT")
 	}
-	r.ParseForm()
-	fmt.Printf("%v", r.Form["level"])
 
-	_, err = strconv.Atoi(strings.TrimSpace(strings.Join(r.Form["level"], "")))
+	l, err := strconv.Atoi(strings.TrimSpace(strings.Join(r.Form["level"], "")))
+	if err != nil {
+		log.Printf("%s was the attempted type", r.Form["level"])
+		return nil, myHTTP.Unprocessable
+	}
+	n := spell{
+		Level:       l,
+		Name:        r.Form["name"][1],
+		Description: r.Form["description"][1],
+	}
+	t = append(t, n)
+	err = saveSpells(t)
 	if err != nil {
 		return nil, err
 	}
-	// n := spell{
-	// 	Level:       l,
-	// 	Name:        r.Form["name"][1],
-	// 	Description: r.Form["description"][1],
-	// }
-	// t = append(t, n)
-	// err = saveSpells(t)
-	// if err != nil {
-	// 	return nil, err
-	// }
-	return nil, nil
+	return nil, myHTTP.Unprocessable
 }

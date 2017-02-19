@@ -21,6 +21,7 @@ func magicHandler(f charComp) func(w http.ResponseWriter, r *http.Request) {
 		if _, err := w.Write(b); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			log.Printf("There was an error writing: %s", err)
+			return
 		}
 	}
 }
@@ -28,7 +29,9 @@ func magicHandler(f charComp) func(w http.ResponseWriter, r *http.Request) {
 func main() {
 
 	http.HandleFunc("/api/spells", magicHandler(spells.Dispatcher))
+	http.HandleFunc("/api/spells/", magicHandler(spells.Dispatcher))
 	http.HandleFunc("/api/characters", magicHandler(characters.Dispatcher))
+	http.HandleFunc("/api/characters/", magicHandler(characters.Dispatcher))
 	PORT := os.Getenv("PORT")
 	log.Fatal(http.ListenAndServe(":"+PORT, nil))
 }

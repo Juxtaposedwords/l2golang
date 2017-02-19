@@ -14,5 +14,6 @@ func (e *HTTPError) Error() string {
 }
 
 var (
-	NotFoundErr = &HTTPError{http.StatusNotFound, "Page not found."}
+	Unprocessable = &HTTPError{http.StatusPreconditionFailed, "Invalid insert"}
+	NotFoundErr   = &HTTPError{http.StatusNotFound, "Page not found."}
 )
