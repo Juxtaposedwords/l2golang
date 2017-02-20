@@ -20,11 +20,11 @@ type character struct {
 type handler func(*http.Request) ([]byte, error)
 
 const (
-	listCharPattern      = `^/api/characters?/$$`
+	listCharPattern      = `^/api/characters?/$`
 	addCharPattern       = `^/api/characters/add$`
 	listCharLevelPattern = `^/api/characters/\d+$`
-	URLpath              = "/api/characters/"
 	maxPostSize          = 24309
+	URLpath              = "/api/characters/"
 )
 
 var dispatch = map[string]handler{

@@ -28,9 +28,9 @@ func magicHandler(f charComp) func(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 
-	http.HandleFunc("/api/spells", magicHandler(spells.Dispatcher))
+	//http.HandleFunc("/api/spells", magicHandler(spells.Dispatcher))
 	http.HandleFunc("/api/spells/", magicHandler(spells.Dispatcher))
-	http.HandleFunc("/api/characters", magicHandler(characters.Dispatcher))
+	//http.HandleFunc("/api/characters", magicHandler(characters.Dispatcher))
 	http.HandleFunc("/api/characters/", magicHandler(characters.Dispatcher))
 	PORT := os.Getenv("PORT")
 	log.Fatal(http.ListenAndServe(":"+PORT, nil))
