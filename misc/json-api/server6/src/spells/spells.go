@@ -3,7 +3,6 @@ package spells
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"myHTTP"
 	"myJSON"
 	"net/http"
@@ -22,6 +21,8 @@ const (
 	listSpellPattern      = `^/api/spells$`
 	addSpellPattern       = `^/api/spells/add$`
 	listSpellLevelPattern = `^/api/spells/[\d]+$`
+	maxPostSize           = 24309
+	baseURL               = "/api/spells"
 )
 
 var dispatch = map[string]handler{
@@ -34,7 +35,6 @@ func Dispatcher(r *http.Request) ([]byte, error) {
 	p := r.URL.Path
 	for k, v := range dispatch {
 		ok, err := regexp.MatchString(k, p)
-
 		if err != nil {
 			return nil, err
 		}
@@ -97,26 +97,12 @@ func ListLevelSpells(r *http.Request) ([]byte, error) {
 	return []byte(fmt.Sprintf("There are no level %d spells...Some say the magic has gone away.", s)), nil
 }
 
-func GetSpell(r *http.Request) ([]byte, error) {
-	t, err := LoadSpells()
-	if err != nil {
-		return nil, err
-	}
-	s := r.URL.Path[len("/api/spell/"):]
-	for _, e := range t {
-		if e.Name == s {
-			return json.Marshal(e)
-		}
-	}
-	return []byte(fmt.Sprintf("There is no such spell as %s!", s)), nil
-}
-
 func AddSpell(r *http.Request) ([]byte, error) {
 	t, err := LoadSpells()
 	if err != nil {
 		return nil, err
 	}
-	err = r.ParseMultipartForm(8675309)
+	err = r.ParseMultipartForm(maxPostSize)
 	if err != nil {
 		return nil, myHTTP.Unprocessable
 	}
@@ -130,14 +116,13 @@ func AddSpell(r *http.Request) ([]byte, error) {
 		Name:        r.FormValue("name"),
 		Description: r.FormValue("description"),
 	}
-	if n.Description != "" || n.Name != "" || n.Description != "" {
+	if n.Name == "" || n.Description == "" {
 		return nil, myHTTP.Unprocessable
 	}
 	t = append(t, n)
 	err = saveSpells(t)
 	if err != nil {
-		log.Printf("broke here")
 		return nil, err
 	}
-	return nil, myHTTP.Unprocessable
+	return []byte(""), nil
 }

@@ -3,6 +3,7 @@ package characters
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"myHTTP"
 	"myJSON"
 	"net/http"
@@ -16,14 +17,15 @@ type character struct {
 	Level int    `json: "level"`
 }
 
+type handler func(*http.Request) ([]byte, error)
+
 const (
-	listCharPattern      = `^/api/characters$`
+	listCharPattern      = `^/api/characters/$`
 	addCharPattern       = `^/api/characters/add$`
 	listCharLevelPattern = `^/api/characters/\d+$`
 	URLpath              = "/api/characters/"
+	maxPostSize          = 24309
 )
-
-type handler func(*http.Request) ([]byte, error)
 
 var dispatch = map[string]handler{
 	listCharPattern:      listChars,
@@ -33,7 +35,6 @@ var dispatch = map[string]handler{
 
 func Dispatcher(r *http.Request) ([]byte, error) {
 	p := r.URL.Path
-	fmt.Printf("%s\n, p")
 	for k, v := range dispatch {
 		ok, err := regexp.MatchString(k, p)
 		if err != nil {
@@ -43,6 +44,8 @@ func Dispatcher(r *http.Request) ([]byte, error) {
 			return v(r)
 		}
 	}
+	log.Printf("Broke here %s", r.URL.Path)
+
 	return nil, myHTTP.NotFoundErr
 }
 
@@ -63,7 +66,7 @@ func saveChars(c []character) error {
 	if err != nil {
 		return err
 	}
-	return myJSON.SaveJSON("chracters", b)
+	return myJSON.SaveJSON("characters", b)
 }
 
 func listChars(r *http.Request) ([]byte, error) {
@@ -106,5 +109,35 @@ func listLevelChars(r *http.Request) ([]byte, error) {
 
 }
 func AddCharacter(r *http.Request) ([]byte, error) {
-	return nil, nil
+	t, err := loadChars()
+	if err != nil {
+		log.Printf("testing1")
+		return nil, err
+	}
+	if err = r.ParseMultipartForm(maxPostSize); err != nil {
+		log.Printf("testing2")
+		return nil, err
+	}
+	l, err := strconv.Atoi(r.FormValue("level"))
+	if err != nil {
+		log.Printf("testing3")
+		return nil, myHTTP.Unprocessable
+	}
+
+	n := character{
+		Level: l,
+		Name:  r.FormValue("name"),
+		Race:  r.FormValue("race"),
+	}
+	if n.Name == "" || n.Race == "" {
+		log.Printf("testing4: %s", n)
+		return nil, myHTTP.Unprocessable
+	}
+
+	t = append(t, n)
+	if err = saveChars(t); err != nil {
+		return nil, myHTTP.Unprocessable
+	}
+
+	return []byte(""), nil
 }
