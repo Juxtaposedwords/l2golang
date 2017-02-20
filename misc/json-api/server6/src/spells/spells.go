@@ -18,7 +18,7 @@ type spell struct {
 type handler func(*http.Request) ([]byte, error)
 
 const (
-	listSpellPattern      = `^/api/spells$`
+	listSpellPattern      = `/api/spells?/$`
 	addSpellPattern       = `^/api/spells/add$`
 	listSpellLevelPattern = `^/api/spells/[\d]+$`
 	maxPostSize           = 24309
