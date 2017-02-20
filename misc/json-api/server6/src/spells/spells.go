@@ -9,7 +9,6 @@ import (
 	"net/http"
 	"regexp"
 	"strconv"
-	"strings"
 )
 
 type spell struct {
@@ -40,7 +39,6 @@ func Dispatcher(r *http.Request) ([]byte, error) {
 			return nil, err
 		}
 		if ok {
-			log.Printf("%s", ok)
 			return v(r)
 		}
 	}
@@ -118,23 +116,27 @@ func AddSpell(r *http.Request) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	if err := r.ParseForm(); err != nil {
-		return nil, fmt.Errorf("Attempted to GET, not PUT")
+	err = r.ParseMultipartForm(8675309)
+	if err != nil {
+		return nil, myHTTP.Unprocessable
 	}
 
-	l, err := strconv.Atoi(strings.TrimSpace(strings.Join(r.Form["level"], "")))
+	l, err := strconv.Atoi(r.FormValue("level"))
 	if err != nil {
-		log.Printf("%s was the attempted type", r.Form["level"])
 		return nil, myHTTP.Unprocessable
 	}
 	n := spell{
 		Level:       l,
-		Name:        r.Form["name"][1],
-		Description: r.Form["description"][1],
+		Name:        r.FormValue("name"),
+		Description: r.FormValue("description"),
+	}
+	if n.Description != "" || n.Name != "" || n.Description != "" {
+		return nil, myHTTP.Unprocessable
 	}
 	t = append(t, n)
 	err = saveSpells(t)
 	if err != nil {
+		log.Printf("broke here")
 		return nil, err
 	}
 	return nil, myHTTP.Unprocessable
