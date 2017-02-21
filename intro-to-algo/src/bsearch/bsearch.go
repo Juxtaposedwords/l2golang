@@ -1,10 +1,12 @@
 package bsearch
+
 import (
-    "fmt"
+	"fmt"
 )
+
 func BSearch(a []int, b int) (int, error) {
-	pos := (len(a) -1) / 2
-	d := (len(a) -1 )
+	pos := (len(a) - 1) / 2
+	d := (len(a) - 1)
 	for {
 		d = halfer(d)
 		switch {
@@ -21,11 +23,9 @@ func BSearch(a []int, b int) (int, error) {
 }
 
 func halfer(d int) int {
-    h := int(d/2)
-    if h*2 != d{
-        return h + 1
-    } else {
-        return h
-    }
-    
+	h := int(d / 2)
+	if d%2 != 0 {
+		h = h + 1
+	}
+	return h
 }
