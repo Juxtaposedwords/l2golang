@@ -17,7 +17,7 @@ func TestURLify(t *testing.T) {
 	}
 
 	for _, e := range tt {
-		got, err := URLify(e.haveString, e.haveLength)
+		got, err := URLify([]rune(e.haveString), e.haveLength)
 		want := e.want
 		if got != want {
 			t.Errorf("URLify(%q, %d): got %q, want %q error: %s", e.haveString, e.haveLength, got, want, err)
