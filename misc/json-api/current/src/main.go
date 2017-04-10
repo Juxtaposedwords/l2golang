@@ -3,21 +3,11 @@ package main
 import (
 	"encoding/json"
 	"log"
+	"myThings"
 	"net/http"
 	"os"
 )
 
-type spell struct {
-	Level       int    `json: "level"`
-	Name        string `json: "name"`
-	Description string `json: "description"`
-}
-
-type character struct {
-	Name  string `json: "name"`
-	Race  string `json: "race"`
-	Level int    `json: "level"`
-}
 type charComp func(r *http.Request) ([]byte, error)
 
 func magicHandler(f charComp) func(w http.ResponseWriter, r *http.Request) {
@@ -36,7 +26,7 @@ func magicHandler(f charComp) func(w http.ResponseWriter, r *http.Request) {
 }
 
 func charList(r *http.Request) ([]byte, error) {
-	t := []character{
+	t := []myThings.Character{
 		{Level: 1, Name: "Maloy", Race: "Dwarf"},
 		{Level: 10, Name: "Claw", Race: "Mountain Lion"},
 		{Level: 19, Name: "Clem", Race: "Elf"},
@@ -45,7 +35,7 @@ func charList(r *http.Request) ([]byte, error) {
 }
 
 func spellList(r *http.Request) ([]byte, error) {
-	t := []spell{
+	t := []myThings.Spell{
 		{Level: 1, Name: "loud", Description: "Double the decibel, but no higher than 11."},
 		{Level: 2, Name: "frustrate", Description: "You speak for hours about the liberal agenda"},
 	}
