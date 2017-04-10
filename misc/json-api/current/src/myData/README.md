@@ -21,6 +21,6 @@ would write to:
 
 ## Exposed functions
 ### `func PutCharacter(c Character)(error)`
-### `func GetCharacter(u integer)(error)`
+### `func GetCharacter(u integer)(Character, error)`
 ### `func PutSpell(s Spell)(error)`
-### `func GetSpell(u integer)(error)`
+### `func GetSpell(u integer)(Spell, error)`
