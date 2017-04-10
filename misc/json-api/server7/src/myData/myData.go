@@ -1,22 +1,66 @@
 package myData
 
 import (
+	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
+	"io"
 	"io/ioutil"
+	"myThings"
+	"os"
 )
 
-type character struct {
-	ID    int    `json: "int"`
-	Name  string `json: "name"`
-	Race  string `json: "race"`
-	Level int    `json: "level"`
+var (
+	ErrNotFound = errors.New("Not found.")
+	InvalidType = errors.New("Invalid sstruct type.")
+)
+
+// reads unmarshals a JSON-tagged struct from an io.Reader
+func read(t interface{}, r io.Reader) error {
+	b := &bytes.Buffer{}
+	if _, err := b.ReadFrom(r); err != nil {
+		return err
+	}
+	return json.Unmarshal(b.Bytes(), t)
 }
-type spell struct {
-	ID          int    `json: "id"`
-	Level       int    `json: "level"`
-	Name        string `json: "name"`
-	Description string `json: "description"`
+
+// write marshals a JSON-tagged struct into a byte streamd and writes it an
+//   io.Writer
+func write(t interface{}, w io.Writer) error {
+	p, err := json.Marshal(t)
+	if err != nil {
+		return err
+	}
+	_, err = w.Write(p)
+	return err
+}
+func typeof(v interface{}) string {
+	return fmt.Sprintf("%T", v)
+}
+
+// read any of hte struct resources
+func GetResource(t interface{}, u int) (interface{}, error) {
+	fn := "../resources/"
+	var x interface{}
+	switch typeof(t) {
+	case "Character":
+		fn += fmt.Sprintf("characters/%d.json", u)
+		x = myThings.Character{}
+	case "Spell":
+		fn += fmt.Sprintf("spells/%d.json", u)
+		x = myThings.Spell{}
+	default:
+		return nil, InvalidType
+	}
+	f, err := os.Open(fn)
+	if err != nil {
+		return nil, err
+	}
+	if err = read(x, f); err != nil {
+		return nil, err
+	}
+	return x, nil
 }
 
 func loadJSON(title string) ([]byte, error) {
@@ -30,55 +74,55 @@ func saveJSON(title string, b []byte) error {
 
 }
 
-func ListSpells() ([]spell, error) {
+func ListSpells() ([]myThings.Spell, error) {
 	b, err := loadJSON("spells")
 	if err != nil {
 		return nil, err
 	}
-	var s []spell
+	var s []myThings.Spell
 	if err := json.Unmarshal(b, &s); err != nil {
 		return nil, err
 	}
 	return s, nil
 }
 
-func ListCharacters() ([]character, error) {
+func ListCharacters() ([]myThings.Character, error) {
 	b, err := loadJSON("characters")
 	if err != nil {
 		return nil, err
 	}
-	var s []character
+	var s []myThings.Character
 	if err := json.Unmarshal(b, &s); err != nil {
 		return nil, err
 	}
 	return s, nil
 }
-func GetSpell(id int) (spell, error) {
+func GetSpell(id int) (myThings.Spell, error) {
 	l, err := ListSpells()
 	if err != nil {
-		return spell{}, err
+		return myThings.Spell{}, err
 	}
 	for _, e := range l {
 		if id == e.ID {
 			return e, nil
 		}
 	}
-	return spell{}, fmt.Errorf("Entity not found")
+	return myThings.Spell{}, fmt.Errorf("Entity not found")
 
 }
-func GetCharacter(id int) (character, error) {
+func GetCharacter(id int) (myThings.Character, error) {
 	l, err := ListCharacters()
 	if err != nil {
-		return character{}, err
+		return myThings.Character{}, err
 	}
 	for _, e := range l {
 		if id == e.ID {
 			return e, nil
 		}
 	}
-	return character{}, fmt.Errorf("Entity not found")
+	return myThings.Character{}, fmt.Errorf("Entity not found")
 }
-func PutSpell(input spell) error {
+func PutSpell(input myThings.Spell) error {
 	l, err := ListSpells()
 	if err != nil {
 		return err
@@ -108,7 +152,8 @@ func PutSpell(input spell) error {
 	}
 	return nil
 }
-func PutCharacter(input character) error {
+
+func PutCharacter(input myThings.Character) error {
 	l, err := ListCharacters()
 	if err != nil {
 		return err
