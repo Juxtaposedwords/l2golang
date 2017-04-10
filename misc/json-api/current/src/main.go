@@ -1,11 +1,11 @@
 package main
 
 import (
-	"encoding/json"
+	"characters"
 	"log"
-	"myThings"
 	"net/http"
 	"os"
+	"spells"
 )
 
 type charComp func(r *http.Request) ([]byte, error)
@@ -25,26 +25,9 @@ func magicHandler(f charComp) func(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func charList(r *http.Request) ([]byte, error) {
-	t := []myThings.Character{
-		{Level: 1, Name: "Maloy", Race: "Dwarf"},
-		{Level: 10, Name: "Claw", Race: "Mountain Lion"},
-		{Level: 19, Name: "Clem", Race: "Elf"},
-	}
-	return json.Marshal(t)
-}
-
-func spellList(r *http.Request) ([]byte, error) {
-	t := []myThings.Spell{
-		{Level: 1, Name: "loud", Description: "Double the decibel, but no higher than 11."},
-		{Level: 2, Name: "frustrate", Description: "You speak for hours about the liberal agenda"},
-	}
-	return json.Marshal(t)
-}
 func main() {
-
-	http.HandleFunc("/api/spells", magicHandler(spellList))
-	http.HandleFunc("/api/character", magicHandler(charList))
+	http.HandleFunc("/api/spells", magicHandler(spells.SpellList))
+	http.HandleFunc("/api/character", magicHandler(characters.CharList))
 	PORT := os.Getenv("PORT")
 	log.Fatal(http.ListenAndServe(":"+PORT, nil))
 }
