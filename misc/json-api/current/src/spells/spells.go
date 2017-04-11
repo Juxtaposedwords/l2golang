@@ -7,18 +7,54 @@ import (
 )
 
 const (
-	listCharPattern      = `^/api/characters?/$`
-	addCharPattern       = `^/api/characters/add$`
-	listCharLevelPattern = `^/api/characters/\d+$`
-	maxPostSize          = 24309
-	URLpath              = "/api/characters/"
+	addSpellPattern = `^/api/spells/add$`
+	getSpellPattern = `^/api/spells/[\d]+$`
+
+	maxPostSize = 24309
+	baseURL     = "/api/spells"
 )
 
-// list all the spells
-func SpellList(r *http.Request) ([]byte, error) {
-	t := []myThings.Spell{
-		{Level: 1, Name: "loud", Description: "Double the decibel, but no higher than 11."},
-		{Level: 2, Name: "frustrate", Description: "You speak for hours about the liberal agenda"},
+var dispatch = map[string]handler{
+	addSpellPattern: AddSpell,
+	getSpellPattern: GetSpell,
+}
+
+func AddSpell(r *http.Request) ([]byte, error) {
+	t, err := LoadSpell()
+	if err != nil {
+		return nil, err
 	}
-	return json.Marshal(t)
+	err = r.ParseMultipartForm(maxPostSize)
+	if err != nil {
+		return nil, myHTTP.Unprocessable
+	}
+	id, err := strconv.Atoi(r.URL.Path[len("/api/spells/"):])
+	if err != nil {
+		return nil, myHTTP.Unprocessable
+	}
+	n := Spell{
+		ID:          0,
+		Level:       l,
+		Name:        r.FormValue("name"),
+		Description: r.FormValue("description"),
+	}
+	if n.Name == "" || n.Description == "" {
+		return nil, myHTTP.Unprocessable
+	}
+
+	if err = myData.PutSpell(n); err != nil {
+		return nil, err
+	}
+	return []byte(""), nil
+}
+func GetSpell(r *http.Request) ([]byte, error) {
+
+}
+
+func LoadSpell() ([]Spell, error) {
+	id, err := strconv.Atoi(r.URL.Path[len("/api/spells/"):])
+	if err != nil {
+		return nil, error
+	}
+	return myData.GetSpell(id)
 }
