@@ -2,7 +2,9 @@ package main
 
 import (
 	"characters"
+	"encoding/json"
 	"log"
+	"myThings"
 	"net/http"
 	"os"
 	"spells"
@@ -26,8 +28,9 @@ func magicHandler(f charComp) func(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	http.HandleFunc("/api/spells", magicHandler(spells.SpellList))
-	http.HandleFunc("/api/character", magicHandler(characters.CharList))
+
+	http.HandleFunc("/api/spells/", magicHandler(spells.Dispatcher))
+	http.HandleFunc("/api/character/", magicHandler(characters.Dispatcher))
 	PORT := os.Getenv("PORT")
 	log.Fatal(http.ListenAndServe(":"+PORT, nil))
 }

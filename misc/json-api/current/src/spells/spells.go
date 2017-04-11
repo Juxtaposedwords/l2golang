@@ -6,6 +6,14 @@ import (
 	"net/http"
 )
 
+const (
+	listCharPattern      = `^/api/characters?/$`
+	addCharPattern       = `^/api/characters/add$`
+	listCharLevelPattern = `^/api/characters/\d+$`
+	maxPostSize          = 24309
+	URLpath              = "/api/characters/"
+)
+
 // list all the spells
 func SpellList(r *http.Request) ([]byte, error) {
 	t := []myThings.Spell{
