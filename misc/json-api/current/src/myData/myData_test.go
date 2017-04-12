@@ -5,6 +5,7 @@ import (
 	"myThings"
 	"os"
 	"path/filepath"
+	"reflect"
 	"testing"
 )
 
@@ -32,21 +33,42 @@ func resourceDirMaker() error {
 		return err
 	}
 }
-func resourceDirDeleter() error {
+func resourceDirDeleter() {
 	_ = os.Remove(fs)
 }
 
-func TestPutCharacter(t *testing.T) {
-
+func TestCharacter(t *testing.T) {
+	t1 := &myThings.Character{
+		ID:    1,
+		Level: 3,
+		Name:  "Edgar Codd",
+		Race:  "Data-Layer"}
+	if err := PutCharacter(t1); err != nil {
+		t.Errorf("PutCharacter(%v) returned error %v\n", t1, err)
+	}
+	t2, err := GetCharacter(t1.id)
+	if err != nil {
+		t.Errorf("GetCharacter(%v) returned %v\n", t2, err)
+	}
+	if !reflect.DeepEqual(t1, t2) {
+		t.Errorf("Written and stored character differ:\n t1: %v,\n t2:%v\n", t1, t2)
+	}
 }
-func TestGetCharacter(t *testing.T) {
-
-}
-func TestPutSpell(t *testing.T) {
-	t1 := &myThings.Spell{ID: 1, Level: 3, Name: "Lizard", Description: "Turn people into wizards"}
-	if err := PutThing1(t1); err != nil {
-		t.Errorf("PutThing1(t1) returned %v", err)
-		return
+func TestSpell(t *testing.T) {
+	t1 := &myThings.Spell{
+		ID:          2,
+		Level:       4,
+		Name:        "Testify",
+		Description: "Get realllllly upset over inconsistent unit tests"}
+	if err := PutSpell(t1); err != nil {
+		t.Errorf("PutCharacter(%v) returned error %v\n", t1, err)
+	}
+	t2, err := GetSpell(t1.id)
+	if err != nil {
+		t.Errorf("GetCharacter(%v) returned %v\n", t2, err)
+	}
+	if !reflect.DeepEqual(t1, t2) {
+		t.Errorf("Written and stored character differ:\n t1: %v,\n t2:%v\n", t1, t2)
 	}
 }
 func TestGetSpell(t *testing.T) {
