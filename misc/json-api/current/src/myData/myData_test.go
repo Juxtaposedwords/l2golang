@@ -1,9 +1,40 @@
 package myData
 
 import (
+	"io/ioutil"
 	"myThings"
+	"os"
+	"path/filepath"
 	"testing"
 )
+
+const (
+	fs = "../temporary"
+)
+
+var (
+	resources = []string{"spells", "characters"}
+)
+
+func resourceDirMaker() error {
+	err := os.Mkdir(fs)
+	if err != nil {
+		return err
+	}
+	for _, resource := range resources {
+		dir := filepath.Join(fs, resource)
+		err = os.Mkdir(dir)
+		if err != nil {
+			return err
+		}
+	}
+	if err := os.Mkdir(path, mode); err != nil {
+		return err
+	}
+}
+func resourceDirDeleter() error {
+	_ = os.Remove(fs)
+}
 
 func TestPutCharacter(t *testing.T) {
 
