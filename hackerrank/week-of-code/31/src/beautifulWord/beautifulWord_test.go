@@ -15,6 +15,9 @@ func TestIsBeautiful(t *testing.T) {
 		{"abacaba", "Yes"},
 		{"badd", "No"},
 		{"yes", "No"},
+		{"abcdefghijklmnopqrtuvwzyz", "Yes"},
+		{"z", "Yes"},
+		{"grokingrokingrokingrokingrokingrokingrokingrokingrokingrokingrokingrokingrokingrokingrokingrokin", "Yes"},
 	}
 
 	for _, e := range tt {

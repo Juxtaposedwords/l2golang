@@ -1,6 +1,8 @@
 package beautifulWord
 
-import ()
+import (
+	"fmt"
+)
 
 const (
 	beautTrue  = "Yes"
@@ -23,6 +25,7 @@ func IsBeautiful(input string) string {
 		}
 
 		if index > 0 && isVowel([]rune(input)[index]) && isVowel([]rune(input)[index-1]) {
+			fmt.Printf("%s\n", string(character))
 			return beautFalse
 		}
 	}
