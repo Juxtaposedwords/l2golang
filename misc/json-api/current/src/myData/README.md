@@ -13,14 +13,20 @@ The following character:
 id: 1,
 level: 3,
 name: "Edgar Codd",
-race: "Datalayer"
+race: "Data-Layer"
 }
 ```
 would write to: 
 `resources/characters/1.json`
 
+## Non-Exposed Function
+### `func read(t interface{}, r io.Reader) error `
+unmarshals a JSON-tagged struct from an io.Reader.
+### `func write(t interface{}, w io.Writer) error `
+marshals a JSON-tagged struct into a byte stream and writes it to an io.Writer.
+
 ## Exposed functions
-### `func PutCharacter(c Character)(error)`
-### `func GetCharacter(u int)(Character, error)`
-### `func PutSpell(s Spell)(error)`
-### `func GetSpell(u int)(Spell, error)`
+### `func PutCharacter(c myData.Character)error`
+### `func GetCharacter(u int)(myData.Character, error)`
+### `func PutSpell(s myData.Spell)error`
+### `func GetSpell(u int)(myData.Spell, error)`
