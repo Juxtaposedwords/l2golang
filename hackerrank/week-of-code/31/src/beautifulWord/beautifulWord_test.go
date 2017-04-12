@@ -9,14 +9,17 @@ func TestIsBeautiful(t *testing.T) {
 		have string
 		want string
 	}{
-		{"batman", "yes"},
-		{"apple", "no"},
-		{"beauty", "no"},
+		{"batman", "Yes"},
+		{"apple", "No"},
+		{"beauty", "No"},
+		{"abacaba", "Yes"},
+		{"badd", "No"},
+		{"yes", "No"},
 	}
 
 	for _, e := range tt {
 		if IsBeautiful(e.have) != e.want {
-			t.Errorf("There was a problem with: %+v\n", e)
+			t.Errorf("There was a problem with: %+v got: %s\n", e, IsBeautiful(e.have))
 		}
 	}
 }
