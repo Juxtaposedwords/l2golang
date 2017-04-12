@@ -16,19 +16,22 @@ var (
 func IsBeautiful(input string) string {
 	var lastRune rune
 	for index, character := range input {
+		// All beautiful checks are based off the relationships of characters to previous characters, so skip the first one
 		if index == 0 {
 			continue
 		}
 		lastRune = []rune(input)[index-1]
+		// check to see if the previous rune and present rune are the same
 		if character == lastRune {
 			return beautFalse
 		}
-
-		if index > 0 && isVowel([]rune(input)[index]) && isVowel([]rune(input)[index-1]) {
+		// check to see if the previous rune and the present rune are both variables
+		if isVowel(character) && isVowel(lastRune) {
 			fmt.Printf("%s\n", string(character))
 			return beautFalse
 		}
 	}
+	// If none of the checks have been provided, then return True
 	return beautTrue
 }
 
