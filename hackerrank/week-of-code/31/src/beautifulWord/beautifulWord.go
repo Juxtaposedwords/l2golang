@@ -1,9 +1,5 @@
 package beautifulWord
 
-import (
-	"fmt"
-)
-
 const (
 	beautTrue  = "Yes"
 	beautFalse = "No"
@@ -27,7 +23,6 @@ func IsBeautiful(input string) string {
 		}
 		// check to see if the previous rune and the present rune are both variables
 		if isVowel(character) && isVowel(lastRune) {
-			fmt.Printf("%s\n", string(character))
 			return beautFalse
 		}
 	}
