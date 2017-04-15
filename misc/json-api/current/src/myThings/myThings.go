@@ -10,10 +10,18 @@ type Character struct {
 	Level int    `json: "level"`
 }
 
+func (c Character) GetID() int {
+	return c.ID
+}
+
 // Spells which can be cast. Currently they are not tied to characters
 type Spell struct {
 	ID          int    `json: "id"`
 	Level       int    `json: "level"`
 	Name        string `json: "name"`
 	Description string `json: "description"`
+}
+
+func (s Spell) GetID() int {
+	return s.ID
 }
