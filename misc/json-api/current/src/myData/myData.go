@@ -14,15 +14,21 @@ import (
 var (
 	ErrNotFound = errors.New("Not found.")
 	InvalidType = errors.New("Invalid struct type.")
+	InvalidMode = errors.New("Invalid access method selected.")
 	fs          = "../resources"
 	putMap      = map[string][]string{
 		"*myThings.Character": []string{"characters"},
 		"*myThings.Spell":     []string{"spells"},
 	}
+	meta      = "/meta"
+	maxID     = "id.json"
+	accessGet = "get"
+	accessPut = "put"
 )
 
 type object interface {
 	GetID() int
+	SetID(int)
 }
 
 func read(t interface{}, r io.Reader) error {
@@ -41,46 +47,68 @@ func write(t interface{}, w io.Writer) error {
 	return err
 }
 
-func put(t object) error {
+func access(t object, mode string) error {
 	val, ok := putMap[fmt.Sprintf("%T", t)]
 	if !ok {
 		return InvalidType
 	}
 	file := fmt.Sprintf("%d.json", t.GetID())
 	absFilePath := filepath.Join(fs, val[0], file)
-	f, err := os.Create(absFilePath)
-	if err != nil {
-		return err
-	}
+	var f *os.File
 	defer f.Close()
-	return write(t, f)
+	switch mode {
+	case accessPut:
+		f, err := os.Create(absFilePath)
+		if err != nil {
+			return err
+		}
+		return write(t, f)
+	case accessGet:
+		f, err := os.Open(absFilePath)
+		if err != nil {
+			return err
+		}
+		return read(t, f)
+	default:
+		return InvalidMode
+	}
+
+	return nil
 }
 
-func get(t object) error {
-	val, ok := putMap[fmt.Sprintf("%T", t)]
-	if !ok {
-		return InvalidType
-	}
-	file := fmt.Sprintf("%d.json", t.GetID())
-	absFilePath := filepath.Join(fs, val[0], file)
+func newID(t object) error {
+	objType := fmt.Sprintf("%T", t)
+	mapper := map[string]int{}
+	absFilePath := filepath.Join(fs, meta, maxID)
 	f, err := os.Open(absFilePath)
 	if err != nil {
 		return err
 	}
+	if err = read(mapper, f); err != nil {
+		return nil
+	}
+	max := mapper[objType]
+	mapper[objType] += 1
+	if err = write(mapper, f); err != nil {
+		return err
+	}
 	defer f.Close()
-	return read(t, f)
+
+	t.SetID(max)
+
+	return nil
 }
 func PutCharacter(c *myThings.Character) error {
-	return put(c)
+	return access(c, accessPut)
 }
 
 func GetCharacter(c *myThings.Character) error {
-	return get(c)
+	return access(c, accessGet)
 }
 func PutSpell(s *myThings.Spell) error {
-	return put(s)
+	return access(s, accessPut)
 }
 
 func GetSpell(s *myThings.Spell) error {
-	return get(s)
+	return access(s, accessGet)
 }

@@ -13,6 +13,9 @@ type Character struct {
 func (c Character) GetID() int {
 	return c.ID
 }
+func (c *Character) SetID(id int) {
+	c.ID = id
+}
 
 // Spells which can be cast. Currently they are not tied to characters
 type Spell struct {
@@ -24,4 +27,8 @@ type Spell struct {
 
 func (s Spell) GetID() int {
 	return s.ID
+}
+
+func (s *Spell) SetID(id int) {
+	s.ID = id
 }
