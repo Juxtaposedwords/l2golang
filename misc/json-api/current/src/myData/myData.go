@@ -12,13 +12,13 @@ import (
 )
 
 var (
-	ErrNotFound = errors.New("Not found.")
-	InvalidType = errors.New("Invalid struct type.")
-	InvalidMode = errors.New("Invalid access method selected.")
-	fs          = "../resources"
-	putMap      = map[string][]string{
-		"*myThings.Character": []string{"characters"},
-		"*myThings.Spell":     []string{"spells"},
+	ErrNotFound      = errors.New("Not found.")
+	InvalidType      = errors.New("Invalid struct type.")
+	InvalidMode      = errors.New("Invalid access method selected.")
+	resourceLocation = "../resources"
+	putMap           = map[string]string{
+		"*myThings.Character": "characters",
+		"*myThings.Spell":     "spells",
 	}
 	meta      = "meta"
 	maxID     = "id.json"
@@ -53,11 +53,14 @@ func access(t object, mode string) error {
 		return InvalidType
 	}
 	file := fmt.Sprintf("%d.json", t.GetID())
-	absFilePath := filepath.Join(fs, val[0], file)
+	absFilePath := filepath.Join(resourceLocation, val, file)
 	var f *os.File
 	defer f.Close()
 	switch mode {
 	case accessPut:
+		if t.ID == 0 {
+			assignID(c)
+		}
 		f, err := os.Create(absFilePath)
 		if err != nil {
 			return err
@@ -75,10 +78,10 @@ func access(t object, mode string) error {
 	return nil
 }
 
-func newID(t object) error {
+func assignID(t object) error {
 	objType := fmt.Sprintf("%T", t)
 	mapper := map[string]int{}
-	absFilePath := filepath.Join(fs, meta, maxID)
+	absFilePath := filepath.Join(resourceLocation, meta, maxID)
 	f, err := os.Open(absFilePath)
 	if err != nil {
 		return err
@@ -98,9 +101,6 @@ func newID(t object) error {
 	return nil
 }
 func PutCharacter(c *myThings.Character) error {
-	if c.ID == 0 {
-		newID(c)
-	}
 	return access(c, accessPut)
 }
 
@@ -108,9 +108,6 @@ func GetCharacter(c *myThings.Character) error {
 	return access(c, accessGet)
 }
 func PutSpell(s *myThings.Spell) error {
-	if s.ID == 0 {
-		newId(s)
-	}
 	return access(s, accessPut)
 }
 
