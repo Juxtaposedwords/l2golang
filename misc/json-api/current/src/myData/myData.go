@@ -20,7 +20,7 @@ var (
 		"*myThings.Character": []string{"characters"},
 		"*myThings.Spell":     []string{"spells"},
 	}
-	meta      = "/meta"
+	meta      = "meta"
 	maxID     = "id.json"
 	accessGet = "get"
 	accessPut = "put"
@@ -72,7 +72,6 @@ func access(t object, mode string) error {
 	default:
 		return InvalidMode
 	}
-
 	return nil
 }
 
@@ -99,6 +98,9 @@ func newID(t object) error {
 	return nil
 }
 func PutCharacter(c *myThings.Character) error {
+	if c.ID == 0 {
+		newID(c)
+	}
 	return access(c, accessPut)
 }
 
@@ -106,6 +108,9 @@ func GetCharacter(c *myThings.Character) error {
 	return access(c, accessGet)
 }
 func PutSpell(s *myThings.Spell) error {
+	if s.ID == 0 {
+		newId(s)
+	}
 	return access(s, accessPut)
 }
 

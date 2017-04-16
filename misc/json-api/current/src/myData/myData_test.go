@@ -14,7 +14,7 @@ const (
 )
 
 var (
-	resources = []string{"spells", "characters"}
+	resources = []string{"spells", "characters", "meta"}
 )
 
 func resourceDirMaker() error {
