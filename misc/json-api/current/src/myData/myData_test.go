@@ -9,8 +9,8 @@ import (
 )
 
 const (
-	fakeFS = "/tmp/myData"
-	mode   = 744
+	fakeResourceLocation = "/tmp/myData"
+	mode                 = 764
 )
 
 var (
@@ -18,12 +18,12 @@ var (
 )
 
 func resourceDirMaker() error {
-	err := os.Mkdir(fs, mode)
+	err := os.Mkdir(resourceLocation, mode)
 	if err != nil {
 		return err
 	}
 	for _, resource := range resources {
-		dir := filepath.Join(fs, resource)
+		dir := filepath.Join(resourceLocation, resource)
 		err = os.Mkdir(dir, mode)
 		if err != nil {
 			return err
@@ -33,11 +33,13 @@ func resourceDirMaker() error {
 	return nil
 }
 func resourceDirDeleter() {
-	_ = os.Remove(fs)
+	resourceLocation = fakeResourceLocation
+
+	_ = os.Remove(resourceLocation)
 }
 
 func TestCharacter(t *testing.T) {
-	fs = fakeFS
+	resourceLocation = fakeResourceLocation
 	resourceDirMaker()
 
 	t1 := &myThings.Character{
@@ -59,8 +61,9 @@ func TestCharacter(t *testing.T) {
 	}
 }
 func TestSpell(t *testing.T) {
+	resourceLocation = fakeResourceLocation
+
 	resourceDirMaker()
-	fs = fakeFS
 
 	t1 := &myThings.Spell{
 		ID:          2,

@@ -58,8 +58,8 @@ func access(t object, mode string) error {
 	defer f.Close()
 	switch mode {
 	case accessPut:
-		if t.ID == 0 {
-			assignID(c)
+		if t.GetID() == 0 {
+			assignID(t)
 		}
 		f, err := os.Create(absFilePath)
 		if err != nil {
