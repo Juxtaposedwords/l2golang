@@ -7,10 +7,15 @@ import (
 	"io/ioutil"
 	"myThings"
 	"path/filepath"
+	"reflect"
 )
 
 const (
 	octalMode = 0664
+	meta      = "meta"
+	maxID     = "id.json"
+	accessGet = "get"
+	accessPut = "put"
 )
 
 var (
@@ -18,14 +23,10 @@ var (
 	ErrInvalidType   = errors.New("Invalid struct type.")
 	ErrInvalidMode   = errors.New("Invalid access method selected.")
 	resourceLocation = "../resources"
-	putMap           = map[string]string{
-		"*myThings.Character": "characters",
-		"*myThings.Spell":     "spells",
+	putMap           = map[reflect.Type]string{
+		reflect.TypeOf(&myThings.Character{}): "characters",
+		reflect.TypeOf(&myThings.Spell{}):     "spells",
 	}
-	meta      = "meta"
-	maxID     = "id.json"
-	accessGet = "get"
-	accessPut = "put"
 )
 
 type object interface {
@@ -50,7 +51,7 @@ func write(t interface{}, fn string) error {
 }
 
 func access(t object, mode string) error {
-	val, ok := putMap[fmt.Sprintf("%T", t)]
+	val, ok := putMap[reflect.TypeOf(t)]
 	if !ok {
 		return ErrInvalidType
 	}
