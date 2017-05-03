@@ -7,10 +7,15 @@ import (
 	"io/ioutil"
 	"myThings"
 	"path/filepath"
+	"reflect"
 )
 
 const (
 	octalMode = 0664
+	meta      = "meta"
+	maxID     = "id.json"
+	accessGet = "get"
+	accessPut = "put"
 )
 
 var (
@@ -18,17 +23,13 @@ var (
 	ErrInvalidType   = errors.New("Invalid struct type.")
 	ErrInvalidMode   = errors.New("Invalid access method selected.")
 	resourceLocation = "../resources"
-	putMap           = map[string]string{
-		"*myThings.Character": "characters",
-		"*myThings.Spell":     "spells",
+	putMap           = map[reflect.Type]string{
+		reflect.TypeOf(&myThings.Character{}): "characters",
+		reflect.TypeOf(&myThings.Spell{}):     "spells",
 	}
-	meta      = "meta"
-	maxID     = "id.json"
-	accessGet = "get"
-	accessPut = "put"
 )
 
-type object interface {
+type idObj interface {
 	GetID() int
 	SetID(int)
 }
@@ -49,8 +50,8 @@ func write(t interface{}, fn string) error {
 	return ioutil.WriteFile(fn, p, octalMode)
 }
 
-func access(t object, mode string) error {
-	val, ok := putMap[fmt.Sprintf("%T", t)]
+func access(t idObj, mode string) error {
+	val, ok := putMap[reflect.TypeOf(t)]
 	if !ok {
 		return ErrInvalidType
 	}
@@ -70,7 +71,7 @@ func access(t object, mode string) error {
 	return nil
 }
 
-func assignID(t object) error {
+func assignID(t idObj) error {
 	objType := fmt.Sprintf("%T", t)
 	mapper := map[string]int{}
 	f := filepath.Join(resourceLocation, meta, maxID)
