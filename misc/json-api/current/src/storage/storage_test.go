@@ -1,8 +1,7 @@
-package myData
+package storage
 
 import (
 	"fmt"
-	"myThings"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -10,6 +9,7 @@ import (
 	"runtime"
 	"strings"
 	"testing"
+	"things"
 )
 
 const (
@@ -80,7 +80,7 @@ func TestCharacter(t *testing.T) {
 	resourceLocation := makeResourceDir(t)
 	defer removeResourceDir(t, resourceLocation)
 
-	t1 := &myThings.Character{
+	t1 := &things.Character{
 		ID:    1,
 		Level: 3,
 		Name:  "Edgar Codd",
@@ -88,7 +88,7 @@ func TestCharacter(t *testing.T) {
 	if err := PutCharacter(t1); err != nil {
 		t.Errorf("PutCharacter(%v) returned error %v\n", t1, err)
 	}
-	t2 := &myThings.Character{
+	t2 := &things.Character{
 		ID: t1.GetID()}
 
 	if err := GetCharacter(t2); err != nil {
@@ -107,7 +107,7 @@ func TestSpell(t *testing.T) {
 	if err != nil {
 		t.Errorf("Error creating a directory %s", err)
 	}
-	t1 := &myThings.Spell{
+	t1 := &things.Spell{
 		ID:          2,
 		Level:       4,
 		Name:        "Testify",
@@ -115,7 +115,7 @@ func TestSpell(t *testing.T) {
 	if err = PutSpell(t1); err != nil {
 		t.Errorf("PutCharacter(%v) returned error %v\n", t1, err)
 	}
-	t2 := &myThings.Spell{ID: t1.GetID()}
+	t2 := &things.Spell{ID: t1.GetID()}
 	err = GetSpell(t2)
 	if err != nil {
 		t.Errorf("GetCharacter(%v) returned %v\n", t2, err)
@@ -139,15 +139,15 @@ func TestAssignID(t *testing.T) {
 	defer removeResourceDir(t, resourceLocation)
 
 	metaDataMap := map[string]int{
-		"*myThings.Character": 43,
-		"*myThings.Spell":     56}
+		"*things.Character": 43,
+		"*things.Spell":     56}
 	metaFilePath := filepath.Join(resourceLocation, "meta", "id.json")
 	err := write(metaDataMap, metaFilePath)
 	if err != nil {
 		t.Errorf("There was an issue with opening the temp config file: %s", err)
 		return
 	}
-	testSpell := &myThings.Spell{}
+	testSpell := &things.Spell{}
 	if err = assignID(testSpell); err != nil {
 		t.Errorf("There was a problem the assignment: %s", err)
 	}

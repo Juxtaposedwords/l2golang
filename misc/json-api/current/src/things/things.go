@@ -1,6 +1,6 @@
 // Package things defines the things that the application will use.  This
 // package primarily defines struct types and their JSON serialization rules.
-package myThings
+package things
 
 // Characters that players will create.
 type Character struct {

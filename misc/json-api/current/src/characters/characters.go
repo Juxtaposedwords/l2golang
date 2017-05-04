@@ -2,7 +2,7 @@ package characters
 
 import (
 	"encoding/json"
-	"myThings"
+	"things"
 	"net/http"
 )
 
@@ -31,14 +31,19 @@ func Dispatcher(r *http.Request) ([]byte, error) {
 	return nil, myHTTP.NotFoundErr
 }
 
-func AddCharacter(r *http.Request) ([]byte, error) {
+func AddCharacter(c things.Character) error {
+	return nil
+}
+func UpdateCharacter(c things.Character) error {
+	return nil
+}
+func GetCharacter(u int) (things.Character, error) {
 	return nil, nil
 }
-func CharList(r *http.Request) ([]byte, error) {
-	t := []myThings.Character{
-		{Level: 1, Name: "Maloy", Race: "Dwarf"},
-		{Level: 10, Name: "Claw", Race: "Mountain Lion"},
-		{Level: 19, Name: "Clem", Race: "Elf"},
-	}
-	return json.Marshal(t)
+func DeleteCharacter(u int) error {
+	return nil
+}
+
+func buildCharacter(r *http.Request) (things.Character, error) {
+
 }

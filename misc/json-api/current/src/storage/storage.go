@@ -1,13 +1,13 @@
-package myData
+package storage
 
 import (
 	"encoding/json"
 	"errors"
 	"fmt"
 	"io/ioutil"
-	"myThings"
 	"path/filepath"
 	"reflect"
+	"things"
 )
 
 const (
@@ -24,10 +24,14 @@ var (
 	ErrInvalidMode   = errors.New("Invalid access method selected.")
 	resourceLocation = "../resources"
 	putMap           = map[reflect.Type]string{
-		reflect.TypeOf(&myThings.Character{}): "characters",
-		reflect.TypeOf(&myThings.Spell{}):     "spells",
+		reflect.TypeOf(&things.Character{}): "characters",
+		reflect.TypeOf(&things.Spell{}):     "spells",
 	}
 )
+
+type Client interface {
+	GetCharacter(*things.Character) error
+}
 
 type idObj interface {
 	GetID() int
@@ -90,17 +94,17 @@ func assignID(t idObj) error {
 
 	return nil
 }
-func PutCharacter(c *myThings.Character) error {
+func PutCharacter(c *things.Character) error {
 	return access(c, accessPut)
 }
 
-func GetCharacter(c *myThings.Character) error {
+func GetCharacter(c *things.Character) error {
 	return access(c, accessGet)
 }
-func PutSpell(s *myThings.Spell) error {
+func PutSpell(s *things.Spell) error {
 	return access(s, accessPut)
 }
 
-func GetSpell(s *myThings.Spell) error {
+func GetSpell(s *things.Spell) error {
 	return access(s, accessGet)
 }

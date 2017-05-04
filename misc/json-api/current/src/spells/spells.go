@@ -2,7 +2,7 @@ package spells
 
 import (
 	"encoding/json"
-	"myThings"
+	"things"
 	"net/http"
 )
 
@@ -42,7 +42,7 @@ func AddSpell(r *http.Request) ([]byte, error) {
 		return nil, myHTTP.Unprocessable
 	}
 
-	if err = myData.PutSpell(n); err != nil {
+	if err = storage.PutSpell(n); err != nil {
 		return nil, err
 	}
 	return []byte(""), nil
@@ -56,5 +56,5 @@ func LoadSpell() ([]Spell, error) {
 	if err != nil {
 		return nil, error
 	}
-	return myData.GetSpell(id)
+	return storage.GetSpell(id)
 }
