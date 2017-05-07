@@ -7,7 +7,7 @@ import (
 	"io/ioutil"
 	"path/filepath"
 	"reflect"
-	"things"
+	"types"
 )
 
 const (
@@ -24,18 +24,21 @@ var (
 	ErrInvalidMode   = errors.New("Invalid access method selected.")
 	resourceLocation = "../resources"
 	putMap           = map[reflect.Type]string{
-		reflect.TypeOf(&things.Character{}): "characters",
-		reflect.TypeOf(&things.Spell{}):     "spells",
+		reflect.TypeOf(&types.Character{}): "characters",
+		reflect.TypeOf(&types.Spell{}):     "spells",
 	}
 )
-
-type Client interface {
-	GetCharacter(*things.Character) error
-}
 
 type idObj interface {
 	GetID() int
 	SetID(int)
+}
+
+type Client struct {
+}
+
+func NewClient() *Client {
+	return &Client{}
 }
 
 func read(t interface{}, fn string) error {
@@ -94,17 +97,27 @@ func assignID(t idObj) error {
 
 	return nil
 }
-func PutCharacter(c *things.Character) error {
+func (cl *Client) PutCharacter(c *types.Character) error {
 	return access(c, accessPut)
 }
 
-func GetCharacter(c *things.Character) error {
-	return access(c, accessGet)
+func (cl *Client) GetCharacter(id int) (types.Character, error) {
+	char := types.Character{ID: id}
+	err := access(&char, accessGet)
+	if err != nil {
+		return types.Character{}, err
+	}
+	return char, nil
 }
-func PutSpell(s *things.Spell) error {
+func (cl *Client) PutSpell(s *types.Spell) error {
 	return access(s, accessPut)
 }
 
-func GetSpell(s *things.Spell) error {
-	return access(s, accessGet)
+func (cl *Client) GetSpell(id int) (types.Spell, error) {
+	spell := types.Spell{ID: id}
+	err := access(&spell, accessGet)
+	if err != nil {
+		return types.Spell{}, err
+	}
+	return spell, nil
 }

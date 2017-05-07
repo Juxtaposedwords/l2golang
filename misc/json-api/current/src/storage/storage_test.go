@@ -9,7 +9,7 @@ import (
 	"runtime"
 	"strings"
 	"testing"
-	"things"
+	"types"
 )
 
 const (
@@ -78,20 +78,19 @@ func TestReadWrite(t *testing.T) {
 
 func TestCharacter(t *testing.T) {
 	resourceLocation := makeResourceDir(t)
+	client := NewClient()
 	defer removeResourceDir(t, resourceLocation)
 
-	t1 := &things.Character{
+	t1 := types.Character{
 		ID:    1,
 		Level: 3,
 		Name:  "Edgar Codd",
 		Race:  "Data-Layer"}
-	if err := PutCharacter(t1); err != nil {
+	if err := client.PutCharacter(&t1); err != nil {
 		t.Errorf("PutCharacter(%v) returned error %v\n", t1, err)
 	}
-	t2 := &things.Character{
-		ID: t1.GetID()}
-
-	if err := GetCharacter(t2); err != nil {
+	t2, err := client.GetCharacter(t1.GetID())
+	if err != nil {
 		t.Errorf("GetCharacter(%v) returned %v\n", t2, err)
 	}
 	if !reflect.DeepEqual(t1, t2) {
@@ -103,20 +102,20 @@ func TestSpell(t *testing.T) {
 	resourceLocation := makeResourceDir(t)
 	defer removeResourceDir(t, resourceLocation)
 
+	client := NewClient()
 	err := resourceDirMaker()
 	if err != nil {
 		t.Errorf("Error creating a directory %s", err)
 	}
-	t1 := &things.Spell{
+	t1 := types.Spell{
 		ID:          2,
 		Level:       4,
 		Name:        "Testify",
 		Description: "Get realllllly upset over inconsistent unit tests"}
-	if err = PutSpell(t1); err != nil {
+	if err = client.PutSpell(&t1); err != nil {
 		t.Errorf("PutCharacter(%v) returned error %v\n", t1, err)
 	}
-	t2 := &things.Spell{ID: t1.GetID()}
-	err = GetSpell(t2)
+	t2, err := client.GetSpell(t1.GetID())
 	if err != nil {
 		t.Errorf("GetCharacter(%v) returned %v\n", t2, err)
 	}
@@ -139,15 +138,15 @@ func TestAssignID(t *testing.T) {
 	defer removeResourceDir(t, resourceLocation)
 
 	metaDataMap := map[string]int{
-		"*things.Character": 43,
-		"*things.Spell":     56}
+		"*types.Character": 43,
+		"*types.Spell":     56}
 	metaFilePath := filepath.Join(resourceLocation, "meta", "id.json")
 	err := write(metaDataMap, metaFilePath)
 	if err != nil {
 		t.Errorf("There was an issue with opening the temp config file: %s", err)
 		return
 	}
-	testSpell := &things.Spell{}
+	testSpell := &types.Spell{}
 	if err = assignID(testSpell); err != nil {
 		t.Errorf("There was a problem the assignment: %s", err)
 	}
