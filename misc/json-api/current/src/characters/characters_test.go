@@ -6,11 +6,16 @@ import (
 	"types"
 )
 
-type fakeCharacterStorageClient struct {
-	mapping map[int]error
+type fakeClient struct {
+	ch  *types.Character
+	err error
 }
 
-func (cl fakeCharacterStorageClient) GetCharacter(ch *types.Character) error {
+func (c fakeClient) GetCharacter(_ int) (*types.Character, err) {
+	return c.ch, c.err
+}
+
+func (cl fakeClient) GetCharacter(ch *types.Character) error {
 	err, ok := cl.mapping[ch.ID]
 	if !ok {
 		return errEntityNotFound

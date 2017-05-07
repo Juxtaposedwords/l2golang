@@ -97,8 +97,8 @@ func assignID(t idObj) error {
 
 	return nil
 }
-func (cl *Client) PutCharacter(c *types.Character) error {
-	return access(c, accessPut)
+func (cl *Client) PutCharacter(c types.Character) error {
+	return access(&c, accessPut)
 }
 
 func (cl *Client) GetCharacter(id int) (types.Character, error) {
