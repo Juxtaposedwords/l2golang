@@ -5,17 +5,19 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
+	"os"
 	"path/filepath"
 	"reflect"
 	"types"
 )
 
 const (
-	octalMode = 0664
-	meta      = "meta"
-	maxID     = "id.json"
-	accessGet = "get"
-	accessPut = "put"
+	octalMode    = 0664
+	meta         = "meta"
+	maxID        = "id.json"
+	accessGet    = "get"
+	accessPut    = "put"
+	accessDelete = "delete"
 )
 
 var (
@@ -62,16 +64,18 @@ func access(t idObj, mode string) error {
 	if !ok {
 		return ErrInvalidType
 	}
+	if t.GetID() == 0 {
+		assignID(t)
+	}
 	filename := fmt.Sprintf("%d.json", t.GetID())
 	f := filepath.Join(resourceLocation, val, filename)
 	switch mode {
 	case accessPut:
-		if t.GetID() == 0 {
-			assignID(t)
-		}
 		return write(t, f)
 	case accessGet:
 		return read(t, f)
+	case accessDelete:
+		return os.Remove(f)
 	default:
 		return ErrInvalidMode
 	}
@@ -99,6 +103,9 @@ func assignID(t idObj) error {
 }
 func (cl *Client) PutCharacter(c types.Character) error {
 	return access(&c, accessPut)
+}
+func (cl *Client) DeleteCharacter(id int) error {
+	return access(&types.Character{ID: id}, accessDelete)
 }
 
 func (cl *Client) GetCharacter(id int) (types.Character, error) {

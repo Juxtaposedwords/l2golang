@@ -4,10 +4,10 @@ package types
 
 // Characters that players will create.
 type Character struct {
-	ID    int    `json: "id"`
-	Name  string `json: "name"`
-	Race  string `json: "race"`
-	Level int    `json: "level"`
+	ID    int    `json: "id" `
+	Name  string `json: "name" validate:"nonzero"`
+	Race  string `json: "race" validate:"nonzero"`
+	Level int    `json: "level" validate:"nonzero"`
 }
 
 func (c Character) GetID() int {
