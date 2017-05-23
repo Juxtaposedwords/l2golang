@@ -49,6 +49,7 @@ func Dispatcher(r *http.Request) ([]byte, error) {
 			return nil, err
 		}
 		if ok {
+			fmt.Printf("here is where we dispatch %+V\n", v)
 			return v(r)
 		}
 	}

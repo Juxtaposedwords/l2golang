@@ -18,6 +18,7 @@ const (
 	accessGet    = "get"
 	accessPut    = "put"
 	accessDelete = "delete"
+	accessUpdate = "update"
 )
 
 var (
@@ -64,11 +65,21 @@ func access(t idObj, mode string) error {
 	if !ok {
 		return ErrInvalidType
 	}
+	var filename, f string
+	if t.GetID() != 0 {
+		filename = fmt.Sprintf("%d.json", t.GetID())
+		f = filepath.Join(resourceLocation, val, filename)
+		if _, err := os.Stat(f); os.IsNotExist(err) {
+			return err
+		}
+	}
 	if t.GetID() == 0 {
 		assignID(t)
 	}
-	filename := fmt.Sprintf("%d.json", t.GetID())
-	f := filepath.Join(resourceLocation, val, filename)
+	filename = fmt.Sprintf("%d.json", t.GetID())
+	f = filepath.Join(resourceLocation, val, filename)
+	// Make sure the file exists
+
 	switch mode {
 	case accessPut:
 		return write(t, f)
@@ -76,6 +87,8 @@ func access(t idObj, mode string) error {
 		return read(t, f)
 	case accessDelete:
 		return os.Remove(f)
+	case accessUpdate:
+		return write(t, f)
 	default:
 		return ErrInvalidMode
 	}
@@ -106,6 +119,9 @@ func (cl *Client) PutCharacter(c types.Character) error {
 }
 func (cl *Client) DeleteCharacter(id int) error {
 	return access(&types.Character{ID: id}, accessDelete)
+}
+func (cl *Client) UpdateCharacter(c types.Character) error {
+	return access(&c, accessUpdate)
 }
 
 func (cl *Client) GetCharacter(id int) (types.Character, error) {
