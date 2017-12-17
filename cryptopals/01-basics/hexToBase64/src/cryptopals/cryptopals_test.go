@@ -48,8 +48,7 @@ func TestXORHex(t *testing.T) {
 				[]byte("776f6f66"),
 			},
 			[]byte("1a0a0011"),
-		},
-	}
+		}}
 
 	for _, tc := range tt {
 		if got, err := XORHex(tc.have[0], tc.have[1]); !reflect.DeepEqual(got, tc.want) {

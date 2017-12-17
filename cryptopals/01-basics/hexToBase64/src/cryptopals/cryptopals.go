@@ -35,6 +35,8 @@ func XORHex(a1 []byte, a2 []byte) ([]byte, error) {
 	for i := range b1 {
 		b3[i] = b1[i] ^ b2[i]
 	}
-	fmt.Printf("%s\n", b3)
-	return b3, nil
+
+	dst := make([]byte, hex.EncodedLen(len(b3)))
+	hex.Encode(dst, b3)
+	return dst, nil
 }
