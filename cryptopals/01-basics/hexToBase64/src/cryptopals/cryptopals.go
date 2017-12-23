@@ -36,7 +36,24 @@ func XORHex(a1 []byte, a2 []byte) ([]byte, error) {
 		b3[i] = b1[i] ^ b2[i]
 	}
 
-	dst := make([]byte, hex.EncodedLen(len(b3)))
-	hex.Encode(dst, b3)
-	return dst, nil
+	return []byte(hex.EncodeToString(b3)), nil
+}
+
+func XORHexSingleChar(a1 string, c rune) (string, error) {
+	b1, err := hex.DecodeString(a1)
+	if err != nil {
+		return "", err
+	}
+	b3 := make([]byte, len(b1))
+	for i := range b1 {
+		b3[i] = b1[i] ^ byte(c)
+	}
+	return string(b3), nil
+}
+func stringFreq(a1 string) map[rune]int {
+	o := map[rune]int{}
+	for _, e := range a1 {
+		o[e]++
+	}
+	return o
 }

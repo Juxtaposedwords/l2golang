@@ -57,3 +57,45 @@ func TestXORHex(t *testing.T) {
 		}
 	}
 }
+
+func TestXORHexSingleChar(t *testing.T) {
+	tt := []struct {
+		haveString string
+		haveRune   rune
+		want       string
+	}{
+		{
+			"1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736",
+			'd',
+			`SSWUR[qOPUWY]LSIRXSZ^]_SR`,
+		},
+		{
+			"1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736",
+			'a',
+			`zVVRPW^tzJUPR\XIVLW]V_[XZVW`,
+		},
+	}
+
+	for _, tc := range tt {
+		if got, err := XORHexSingleChar(tc.haveString, tc.haveRune); got != tc.want {
+			t.Errorf("Conversion failed.\n TestXORHex(%s, %s)\n Got: %s\n err: %s\n want: %s\n", tc.haveString, tc.haveRune, got, err, tc.want)
+		}
+	}
+}
+
+func TestStringFreq(t *testing.T) {
+	tt := []struct {
+		haveString string
+		want       map[rune]int
+	}{
+		{
+			"aaaabbbccd",
+			map[rune]int{'a': 4, 'b': 3, 'c': 2, 'd': 1},
+		},
+	}
+	for _, tc := range tt {
+		if got := stringFreq(tc.haveString); !reflect.DeepEqual(tc.want, got) {
+			t.Errorf("Function stringFreq failed.\n  Got: %#V\n want:%#V\n", got, tc.want)
+		}
+	}
+}
