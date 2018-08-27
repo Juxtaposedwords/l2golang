@@ -1,6 +1,7 @@
 package addTwo
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
 )
@@ -17,7 +18,7 @@ type ListNode struct {
 func AddTwoNumbers(l1 *ListNode, l2 *ListNode) *ListNode {
 	return UInt64ToList(ListToUInt64(l1) + ListToUInt64(l2))
 }
-func ListToUInt64(ll *ListNode) int {
+func ListToUInt64(ll *ListNode) uint64 {
 	node := ll
 	d := []string{}
 	for {
@@ -29,12 +30,12 @@ func ListToUInt64(ll *ListNode) int {
 	}
 	// Now let's get everything in the right order
 	d = reverseArray(d)
-	o, _ := strconv.Atoi(strings.Join(d, ""))
+	o, _ := strconv.ParseUint(strings.Join(d, ""), 10, 64)
 	return o
 }
-func UInt64ToList(input int) *ListNode {
+func UInt64ToList(input uint64) *ListNode {
 	// Split  the UInt64eger UInt64o a slice for each digit
-	d := strings.Split(strconv.Itoa(input), "")
+	d := strings.Split(fmt.Sprintf("%d", input), "")
 
 	// set the UInt64ial node
 	x, _ := strconv.Atoi(d[len(d)-1])

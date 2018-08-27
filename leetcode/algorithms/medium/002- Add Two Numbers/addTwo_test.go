@@ -1,6 +1,7 @@
 package addTwo
 
 import (
+	"fmt"
 	"reflect"
 	"strconv"
 	"strings"
@@ -18,6 +19,13 @@ func TestAddTwoNumbers(t *testing.T) {
 				&ListNode{5, &ListNode{6, &ListNode{4, nil}}},
 			},
 			&ListNode{7, &ListNode{0, &ListNode{8, nil}}},
+		},
+		{
+			[2]*ListNode{
+				&ListNode{1, &ListNode{0, &ListNode{0, &ListNode{0, &ListNode{0, &ListNode{0, &ListNode{0, &ListNode{0, &ListNode{0, &ListNode{0, &ListNode{0, &ListNode{0, &ListNode{0, &ListNode{0, &ListNode{0, &ListNode{0, &ListNode{0, &ListNode{0, &ListNode{0, &ListNode{0, &ListNode{0, &ListNode{0, &ListNode{0, &ListNode{0, &ListNode{0, &ListNode{0, &ListNode{0, &ListNode{0, &ListNode{0, &ListNode{0, &ListNode{1, nil}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}},
+				&ListNode{4, &ListNode{6, &ListNode{4, nil}}},
+			},
+			&ListNode{6, &ListNode{6, &ListNode{4, &ListNode{0, &ListNode{0, &ListNode{0, &ListNode{0, &ListNode{0, &ListNode{0, &ListNode{0, &ListNode{0, &ListNode{0, &ListNode{0, &ListNode{0, &ListNode{0, &ListNode{0, &ListNode{0, &ListNode{0, &ListNode{0, &ListNode{0, &ListNode{0, &ListNode{0, &ListNode{0, &ListNode{0, &ListNode{0, &ListNode{0, &ListNode{0, &ListNode{0, &ListNode{0, &ListNode{0, &ListNode{1, nil}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}},
 		},
 	}
 	for _, v := range tt {
@@ -40,7 +48,7 @@ func TestListToUInt64(t *testing.T) {
 		{&ListNode{9, &ListNode{8, &ListNode{7, nil}}}, 789},
 	}
 	for _, v := range tt {
-		got := strings.Split(strconv.Itoa(ListToUInt64(v.have)), "")
+		got := strings.Split(fmt.Sprintf("%d", (ListToUInt64(v.have))), "")
 		want := nodeToSlice(v.have)
 
 		if !reflect.DeepEqual(got, want) {
@@ -59,8 +67,8 @@ func TestUInt64ToList(t *testing.T) {
 		{0, &ListNode{0, nil}},
 	}
 	for _, v := range tt {
-		got := nodeToSlice(UInt64ToList(v.have))
-		want := strings.Split(strconv.Itoa(v.have), "")
+		got := nodeToSlice(UInt64ToList(uint64(v.have)))
+		want := strings.Split(fmt.Sprintf("%d", (v.have)), "")
 		if !reflect.DeepEqual(got, want) {
 			t.Errorf("Error with UInt64ToList: %#V, got %v want : %v", v, got, want)
 		}
