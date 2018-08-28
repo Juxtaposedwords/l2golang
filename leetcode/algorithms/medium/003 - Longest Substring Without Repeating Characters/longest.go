@@ -24,8 +24,6 @@ import (
 func lengthOfLongestSubstring(s string) int {
 	z := []string{}
 	o := 0
-	//  we use a 1 based loop to help keep better track of the distance
-	//  step over every item in the list
 	for _, e := range strings.Split(s, "") {
 		for j, f := range z {
 			if f == e {
@@ -37,6 +35,5 @@ func lengthOfLongestSubstring(s string) int {
 			o = len(z)
 		}
 	}
-
 	return o
 }
