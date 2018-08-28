@@ -1,55 +1,41 @@
 package longest
 
 import (
-	"fmt"
+	//	"fmt"
 	"strings"
 )
 
 // Problem: Given a string, find the length of the longest substring
 //  without repeating characters.
 
-//  Solution Time: O(n)
-
+//  Solution Time: O(n) *  1,114,112
+//         the runtime is deceptive as it can get quite large, as any unicode
+//         rune can be used as a "character."
+//
 //  Approach:
-// Create empty maps[string]int of lastSeen  and distances
+//  Create the list you want to compare against as you go, and store the
+//       highest list
 // 1. Step over rune in the slice/string
-//     a. If we haven't seen it before(it's not the lastSeen dict):
-//          i. add the rune to Last seen with the index
-//     b. If we have seen it before
-//          i. update the index
-//          ii. check if the new distance is greater
-// 2. Step throug the dictionary and find the highest value
+//     a. If we we've seen it before truncate the previous list to include
+//          everything until right after it.
+//     b. Append the new item to the list
+//     c. check if this new list is the largest one yet
 
 func lengthOfLongestSubstring(s string) int {
-	l := []string{}
-	distance := 0
-	lastSeen := make(map[string]int)
-	l := strings.Split(s, "")
+	z := []string{}
 	o := 0
 	//  we use a 1 based loop to help keep better track of the distance
 	//  step over every item in the list
-	for i := 1; i <= len(l); i++ {
-
-		// Get the character in question
-		e := l[i-1]
-
-		// Find out if we've seen it before
-		val, seen := lastSeen[e]
-		if seen {
-			distance = i - val
-			if distance > o {
-				o = distance
+	for _, e := range strings.Split(s, "") {
+		for j, f := range z {
+			if f == e {
+				z = z[j+1:]
 			}
-			distance = 1
-		} else {
-			distance++
-			lastSeen[e] = i
 		}
-		fmt.Printf("Distance: %d slice: %v\n", distance, l[i-distance:i])
-
-	}
-	if distance > o {
-		o = distance
+		z = append(z, e)
+		if len(z) > o {
+			o = len(z)
+		}
 	}
 
 	return o
