@@ -16,41 +16,40 @@ func longestCommonPrefix(strs []string) string {
 
 	// Our logic will always be comparing two strings. We'll start off by
 	//   returning anything that is too short
-	if len(strs) < 2 {
+	return recur(strs)
+
+}
+func recur(strs []string) string {
+	switch len(strs) {
+	case 1:
 		return strs[0]
+	case 2:
+		return commonPrefix(strs[0], strs[1])
 	}
+	n := int(len(strs) / 2)
 
-	// We begin at first by assumming there is complete overlap
-	o := strings.Split(strs[0], "")
+	l, r := recur(strs[:n]), recur(strs[n:])
+	return commonPrefix(l, r)
 
-	for i := 1; i < len(strs); i++ {
-		// Now we got through all the other word and check if there is a match
-		x := commonPrefix(o, strings.Split(strs[i], ""))
-
-		// If the prefix is smaller then we'll set that as the new limit
-		if len(o) > len(x) {
-			o = x
-		}
-	}
-	return strings.Join(o, "")
 }
 
 // We break common prefix into a separate function for testing and
 //    and for ease of reading.
-func commonPrefix(str1 []string, str2 []string) []string {
+func commonPrefix(str1 string, str2 string) string {
+	s1, s2 := strings.Split(str1, ""), strings.Split(str2, "")
 	//Ensure str1 is always the shortest string, for ease of iterating
-	if len(str1) > len(str2) {
-		str1, str2 = str2, str1
+	if len(s1) > len(s2) {
+		s1, s2 = s2, s1
 	}
 	// Create the output array
 	o := []string{}
 
 	// Now loop over the array until we find a non-match
-	for i := range str1 {
-		if str1[i] != str2[i] {
-			return o
+	for i := range s1 {
+		if s1[i] != s2[i] {
+			return strings.Join(o, "")
 		}
-		o = append(o, str1[i])
+		o = append(o, s1[i])
 	}
-	return o
+	return strings.Join(o, "")
 }

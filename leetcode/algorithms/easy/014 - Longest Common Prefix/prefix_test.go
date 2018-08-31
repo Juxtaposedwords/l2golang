@@ -2,7 +2,6 @@ package prefix
 
 import (
 	"reflect"
-	"strings"
 	"testing"
 )
 
@@ -30,24 +29,24 @@ func TestLongestCommonPrefix(t *testing.T) {
 
 func TestCommmonPrefix(t *testing.T) {
 	tt := []struct {
-		havea []string
-		haveb []string
-		want  []string
+		havea string
+		haveb string
+		want  string
 	}{
 		{
-			strings.Split("flower", ""),
-			strings.Split("flight", ""),
-			strings.Split("fl", ""),
+			"flower",
+			"flight",
+			"fl",
 		},
 		{
-			strings.Split("dog", ""),
-			strings.Split("racecar", ""),
-			strings.Split("", ""),
+			"dog",
+			"racecar",
+			"",
 		},
 		{
-			strings.Split("flipped", ""),
-			strings.Split("flipped", ""),
-			strings.Split("flipped", ""),
+			"flipped",
+			"flipped",
+			"flipped",
 		},
 	}
 	for _, v := range tt {
