@@ -16,21 +16,25 @@ func longestCommonPrefix(strs []string) string {
 
 	// Our logic will always be comparing two strings. We'll start off by
 	//   returning anything that is too short
-	return recur(strs)
-
-}
-func recur(strs []string) string {
 	switch len(strs) {
+	case 0:
+		return ""
 	case 1:
 		return strs[0]
-	case 2:
-		return commonPrefix(strs[0], strs[1])
 	}
-	n := int(len(strs) / 2)
 
-	l, r := recur(strs[:n]), recur(strs[n:])
-	return commonPrefix(l, r)
+	// We begin at first by assumming there is complete overlap
+	o := strs[0]
 
+	for i := 1; i < len(strs); i++ {
+		// Now we got through all the other word and check if there is a match
+		o = commonPrefix(o, strs[i])
+		if len(o) == 0 {
+			return ""
+
+		}
+	}
+	return o
 }
 
 // We break common prefix into a separate function for testing and

@@ -18,6 +18,7 @@ func TestLongestCommonPrefix(t *testing.T) {
 		{[]string{"flower", "flow", "flight"}, "fl"},
 		{[]string{"dog", "racecar", "car"}, ""},
 		{[]string{"", "", "   "}, ""},
+		{[]string{}, ""},
 	}
 	for _, v := range tt {
 		got := longestCommonPrefix(v.have)
@@ -29,28 +30,15 @@ func TestLongestCommonPrefix(t *testing.T) {
 
 func TestCommmonPrefix(t *testing.T) {
 	tt := []struct {
-		havea string
-		haveb string
-		want  string
+		have [2]string
+		want string
 	}{
-		{
-			"flower",
-			"flight",
-			"fl",
-		},
-		{
-			"dog",
-			"racecar",
-			"",
-		},
-		{
-			"flipped",
-			"flipped",
-			"flipped",
-		},
+		{[2]string{"flower", "flight"}, "fl"},
+		{[2]string{"dog", "racecar"}, ""},
+		{[2]string{"flipped", "flipped"}, "flipped"},
 	}
 	for _, v := range tt {
-		got := commonPrefix(v.havea, v.haveb)
+		got := commonPrefix(v.have[0], v.have[1])
 		if !reflect.DeepEqual(got, v.want) {
 			t.Errorf("commonPrefix: %#v got:%s", v, got)
 		}
