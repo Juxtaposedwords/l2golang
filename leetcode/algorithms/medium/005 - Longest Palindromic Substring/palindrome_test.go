@@ -5,6 +5,7 @@ import (
 )
 
 var LongestPalindrome = longestPalindrome
+var IsPalindromic = isPalindromic
 
 func TestLongestPalindrome(t *testing.T) {
 
@@ -12,8 +13,10 @@ func TestLongestPalindrome(t *testing.T) {
 		have string
 		want string
 	}{
-		{"babad", "bab"},
+		{"dabad", "dabad"},
 		{"cbbd", "bb"},
+		{"dabadddddddddddddddddddddddddddddddddddd", "dddddddddddddddddddddddddddddddddddd"},
+		//		{"jrjnbctoqgzimtoklkxcknwmhiztomaofwwzjnhrijwkgmwwuazcowskjhitejnvtblqyepxispasrgvgzqlvrmvhxusiqqzzibcyhpnruhrgbzsmlsuacwptmzxuewnjzmwxbdzqyvsjzxiecsnkdibudtvthzlizralpaowsbakzconeuwwpsqynaxqmgngzpovauxsqgypinywwtmekzhhlzaeatbzryreuttgwfqmmpeywtvpssznkwhzuqewuqtfuflttjcxrhwexvtxjihunpywerkktbvlsyomkxuwrqqmbmzjbfytdddnkasmdyukawrzrnhdmaefzltddipcrhuchvdcoegamlfifzistnplqabtazunlelslicrkuuhosoyduhootlwsbtxautewkvnvlbtixkmxhngidxecehslqjpcdrtlqswmyghmwlttjecvbueswsixoxmymcepbmuwtzanmvujmalyghzkvtoxynyusbpzpolaplsgrunpfgdbbtvtkahqmmlbxzcfznvhxsiytlsxmmtqiudyjlnbkzvtbqdsknsrknsykqzucevgmmcoanilsyyklpbxqosoquolvytefhvozwtwcrmbnyijbammlzrgalrymyfpysbqpjwzirsfknnyseiujadovngogvptphuyzkrwgjqwdhtvgxnmxuheofplizpxijfytfabx", "qosoq"},
 	}
 
 	for _, v := range tt {
@@ -23,4 +26,21 @@ func TestLongestPalindrome(t *testing.T) {
 		}
 	}
 
+}
+func TestIsPalindromic(t *testing.T) {
+
+	tt := []struct {
+		have string
+		want bool
+	}{
+		{"aba", true},
+		{"dbddd", false},
+	}
+
+	for _, v := range tt {
+		got := isPalindromic(v.have)
+		if got != v.want {
+			t.Errorf("IsPalindromic: %#v want:%b", v, got)
+		}
+	}
 }
