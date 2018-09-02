@@ -19,19 +19,42 @@ First approach:
     For each character in the word look over every previous letter to see if that
       makes a palindrome.
         * Stop at the first one you find (the others won't be longer)
-        *
+        * Use divide and conquer
+
+Second approach:
+    Split the work and callign longestPlaindrome recursively so that
+    longestPalindrome("tacocat")
+    |                           \
+    firstPalindrome("tacocat")  longestPlaindrome("acocat")
+                                 |                          \
+                                 firstPalindrome("acocat")   longestPalindrome("cocat")
+    ...
+Note:
+    This doesn't solve our problem and doesn't help the asymptotic growth.
+        So that means we need to reconsider the data-struct involved as it will
+            inform the algorithm
+
+Third approach:
 
 */
 func longestPalindrome(s string) string {
-	if len(s) <= 1 {
+	switch len(s) {
+	case 0:
+		return ""
+	case 1:
 		return s
+	case 2:
+		return firstPalindrome(s)
 	}
 
-	l := strings.Split(s, "")
+	sl := strings.Split(s, "")
+	n := int(len(sl) / 2)
+	var o string
+	l, r := strings.Split(sl[:n], ""), strings.Split(sl[n-1:], "")
 
 	//get the longest palidnrome for the next one.
-	left := longestPalindrome(strings.Join(l[1:], ""))
-	right := firstPalindrome(s)
+	left := longestPalindrome(strings.Join(l[:], ""))
+	right := longestPalindrome(strings.Join(l[:], ""))
 	if len(left) > len(right) {
 		return left
 	} else {
@@ -42,7 +65,10 @@ func longestPalindrome(s string) string {
 func isPalindromic(s string) bool {
 	c := strings.Split(s, "")
 	n := int(len(c) / 2)
-	for i := 0; i < n; i++ {
+	if len(c)%2 != 0 {
+		n -= 1
+	}
+	for i := n; i > 0; i-- {
 		if c[i] != c[len(c)-1-i] {
 			return false
 		}
