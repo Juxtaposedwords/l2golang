@@ -1,0 +1,172 @@
+
+             -=How to crack a unix password file=-
+                       -=Lord Devious=-
+
+1.) Obtaining a password file.
+
+     There are a few diffrent ways to get a password file. You can:
+
+a.) Telnet to port 21 on the provider.
+
+b.) Use an FTP program that does all the commands for you. I happen to
+use WINFTP wich can be downloaded from: 
+http://www.geocities.com/siliconvalley/vista/9203/winftp.zip
+
+
+2.) Logon to the server.
+
+A.) When using TELNET type:
+User anonymous
+login
+
+B.) When using WINFTP:
+Just leave everything blank with the exception of HOST which is filed with
+the HOST you are connecting to.
+Then hit Anonymous Login and ti will automaticly fill the UserId with Anonymous
+
+    Now you should be in the system (probably in TMP) if not then this system
+wont allow anonymous logins. If this is true try getting an account on the system.
+Call up the ISP and tell them you want an account but ask for a seven day tril to
+the system. In most cases the will give it to you.
+
+3.) Find the password file.
+
+     You will normaly find some sort of password file in the ETC directory. 
+It will normaly be called PWD.DB or PASSWD, dowlaod this file. 
+
+4.) Determining the password file type.
+
+	You may allready know that a shadowed password file is not as eisly
+cracked as a unshadowed file. But you may not know wether it is shadowed or
+not. So heare are some examples.
+
+<<Example of an unshadowed password file>>
+root:RqX6dqOZsf4BI:0:1:System PRIVILEGED Account,,,:/:/bin/csh
+field:PASSWORD HERE:0:1:Field Service PRIVILEGED Account:/usr/field:/bin/csh
+operator:PASSWORD HERE:0:28:Operator PRIVILEGED Account:/opr:/opr/opser
+ris:Nologin:11:11:Remote Installation Services Account:/usr/adm/ris:/bin/sh
+daemon:*:1:1:Mr Background:/:
+sys:PASSWORD HERE:2:3:Mr Kernel:/usr/sys:
+bin:PASSWORD HERE:3:4:Mr Binary:/bin:
+uucp:Nologin:4:1:UNIX-to-UNIX Copy:/usr/spool/uucppublic:/usr/lib/uucp/uucico
+uucpa:Nologin:4:1:uucp adminstrative account:/usr/lib/uucp:
+sso:Nologin:6:7:System Security Officer:/etc/security:
+news:Nologin:8:8:USENET News System:/usr/spool/netnews:
+sccs:PASSWORD HERE:9:10:Source Code Control:/:
+ingres:PASSWORD HERE:267:74:ULTRIX/SQL Administrator:/usr/kits/sql:/bin/csh
+rlembke:n25SO.YgDxqhs:273:15:Roger Lembke,,,:/usr/email/users/rlembke:/bin/csh
+rhuston:ju.FWWOh0cUSM:274:15:Robert Huston,st 304c,386,:/usr/email/users/rhuston:/bin/csh
+jgordon:w4735loqb8F5I:275:15:James."Tiger" Gordon:/usr/email/users/jgordon:/bin/csh
+lpeery:YIJkAzKSxkz4M:276:15:Larry Peery:/usr/email/users/lpeery:/bin/csh
+nsymes:lSzkVgKhuOWRM:277:15:Nancy Symes:/usr/email/users/nsymes:/bin/csh
+<<END>>
+  
+     Now the actual file is much longer than this but you can get a basic 
+idea. If you want to dowload this file for further observation you can get it
+at http://www.chez.com/davidcb/unshd.zip
+
+<<Example of a shadowed password file>>
+root:RqX6dqOZsf4BI:0:1:System PRIVILEGED Account,,,:/:/bin/csh
+field:*:0:1:Field Service PRIVILEGED Account:/usr/field:/bin/csh
+operator:*:0:28:Operator PRIVILEGED Account:/opr:/opr/opser
+ris:*:11:11:Remote Installation Services Account:/usr/adm/ris:/bin/sh
+daemon:*:1:1:Mr Background:/:
+sys:*:2:3:Mr Kernel:/usr/sys:
+bin:*:3:4:Mr Binary:/bin:
+uucp:*:4:1:UNIX-to-UNIX Copy:/usr/spool/uucppublic:/usr/lib/uucp/uucico
+uucpa:*:4:1:uucp adminstrative account:/usr/lib/uucp:
+sso:*:6:7:System Security Officer:/etc/security:
+news:*:8:8:USENET News System:/usr/spool/netnews:
+sccs:*:9:10:Source Code Control:/:
+ingres:*:267:74:ULTRIX/SQL Administrator:/usr/kits/sql:/bin/csh
+rlembke:*:273:15:Roger Lembke,,,:/usr/email/users/rlembke:/bin/csh
+rhuston:*:274:15:Robert Huston,st 304c,386,:/usr/email/users/rhuston:/bin/csh
+jgordon:*:15:James."Tiger" Gordon:/usr/email/users/jgordon:/bin/csh
+lpeery:*:276:15:Larry Peery:/usr/email/users/lpeery:/bin/csh
+nsymes:*:277:15:Nancy Symes:/usr/email/users/nsymes:/bin/csh
+<<END>>
+
+	The actual file is much larger than this. The lines were cut to fit
+in this document, and its much longer. If you want to download this file for
+further observation you can get it at http://www.chez.com/davidcb/shdod.zip
+
+
+5.) What to do to crack the file if it is unshadowed.
+
+
+	If you are shure that the file is unshadowed you can attempt to crack
+it. To crack it you need to get a cracker program. I suggest either John the
+ripper or Cracker Jack. I personaly use john the ripper. It can be downloaded
+from http://www.chez.com/davidcb/ucfjohn1.zip
+
+A.) Create a wordlist of random passwords, but if you want a good one 
+premade you can download the whole passcrack lesson 1 zip from Hackers Club
+at http://www.hackersclub.com/km/newbies/lesson1/lesson1.zip  this zip file
+contains: PUFFS.DIC wich is a word dictonary for Jhon the ripper or Cracker
+Jack. CJACK.FAQ is a Cracker Jack FAQ by kM. HACKME.TXT is an example password
+file. INFO.TXT is a lesson on cracking by kM.
+
+B.) Start your cracking program.
+
+     BA.) When using John the ripper
+              john -w:puffs.dic <Password File>
+     
+     BB.) When using Cracker Jack
+              jack (Enter)
+              When prompted for password file:  (Password File)
+              When prompted for wordlist file: PUFFS.DIC  (Or custoume file)     
+           Writes whats it cracks to JACK.POT
+
+c.) The tuffest step of all WAIT!
+
+       With any luck you will get a password. If you are cracking a huge 
+provider with an unshadowed PW file chances are you get a few. 
+
+ <A problem with PUFFS.DIC>
+       Alot of people use all numbers for a password. PUFFS.DIC does not have
+    many numbers so i made a program to generate all six diget numbers to a file.
+    Get it at http://www.chez.com/davidcb/ldmake.zip
+
+6.) Where to find the actual password files if a PW file is shadowed.
+
+     Like i said most of the time the password files are in the ETC directory.
+ But you can find shadowed passwords in these directories according to the 
+system.
+
+Version               Path                            Token
+-----------------------------------------------------------------
+AIX 3                 /etc/security/passwd            !
+          or             /tcb/auth/files//
+A/UX 3.0s             /tcb/files/auth/?/*
+BSD4.3-Reno           /etc/master.passwd              *
+ConvexOS 10           /etc/shadpw                     *
+ConvexOS 11           /etc/shadow                     *
+DG/UX                 /etc/tcb/aa/user/               *
+EP/IX                 /etc/shadow                     x
+HP-UX                 /.secure/etc/passwd             *
+IRIX 5                /etc/shadow                     x
+Linux 1.1             /etc/shadow                     *
+OSF/1                 /etc/passwd[.dir|.pag]          *
+SCO Unix #.2.x        /tcb/auth/files//
+SunOS4.1+c2           /etc/security/passwd.adjunct    ##username
+SunOS 5.0             /etc/shadow
+
+System V Release 4.0  /etc/shadow                     x
+System V Release 4.2  /etc/security/* database
+Ultrix 4              /etc/auth[.dir|.pag]            *
+UNICOS                /etc/udb                        *
+
+7.) You have the password, so what do you do now?
+
+     When i crack passwords this way i dont take advantage of the administrators
+misteak. In all cases i tell the administrator he has problems in his security
+and that i was able to crack some there passwords. The administrator will be 
+extatic that a hacker is helping him out. Infact an account i hacked localy 
+actualy gave me a whole year of free service for notifying him of his problems.
+ 
+     So remeber dont do anything illegal, unless you want a 300 pound boyfriend
+named Bubba. People will like you more if you help them, not destroy them.
+
+                                       Have fun!
+                                        Lord Devious  --====================987654321_0==_
+Content-Type: text/plain; charset="us-ascii"

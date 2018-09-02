@@ -1,0 +1,23 @@
+USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+root         1  0.0  0.2  10660  1384 ?        Ss   Feb10   1:31 init [2]  
+root      1617  0.0  0.3  18984  1636 ?        Ss   Feb10   0:12 /sbin/rpcbind -w
+statd     1648  0.0  0.3  23356  1792 ?        Ss   Feb10   0:00 /sbin/rpc.statd
+root      1660  0.0  0.4  61820  2140 ?        Ss   Feb10   0:00 /usr/sbin/rpc.idmapd
+root      1918  0.0  0.2   4120  1100 ?        Ss   Feb10   0:03 /usr/sbin/nscd
+root      1946  0.0  0.6 113224  3464 ?        Sl   Feb10   3:09 /usr/sbin/rsyslogd -c5
+root      2149  0.0  0.2   4128  1392 ?        Ss   Feb10   0:00 /usr/sbin/acpid
+daemon    2196  0.0  0.0   8272    16 ?        Ss   Feb10   0:00 /usr/sbin/atd
+root      2230  0.0  0.3  10480  1712 ?        Ss   Feb10   0:08 /usr/sbin/cron
+105       2319  0.0  0.0  21404   236 ?        Ss   Feb10   0:00 /usr/bin/dbus-daemon --system
+root      2342  0.0  0.6  43676  3232 ?        Ss   Feb10   0:00 /usr/sbin/sshd
+root      2393  0.0  0.7  33720  3848 ?        Ss   Feb10   0:27 /usr/lib/postfix/master
+postfix   2412  0.0  0.6  33744  3240 ?        S    Feb10   0:05 qmgr -l -t fifo -u
+root      2424  0.0  0.7  32768  3828 ?        Ss   Feb10   6:24 /usr/sbin/ntpd -p /var/run/ntpd.pid -g -u 103:108
+ninja     2456  0.0  0.1    419   117 ?        S    15:12   0:01 curl http://quiz.okcupid.com/letsplayagame/mmsf.jpg
+root      2473  0.0  0.2   6176  1496 pts/0    Ss+  Feb10   0:00 /sbin/getty --noclear 38400 tty1
+root      2474  0.0  0.2   6176  1456 pts/1    Ss+  Feb10   0:00 /sbin/getty --noclear 38400 tty2
+postfix  27327  0.0  0.6  33692  3388 ?        S    15:05   0:00 pickup -l -t fifo -u -c
+root     27334  0.0  1.1  89556  5880 ?        Ss   15:12   0:00 sshd: ninja [priv]
+ninja    27339  0.0  0.6  89556  3284 ?        R    15:12   0:00 sshd: ninja@pts/2
+ninja    27342  0.0  0.7  10424  3764 pts/2    Ss   15:12   0:00 -bash
+ninja    27363  0.0  0.3   6908  1676 pts/2    R+   15:12   0:00 ps aux
