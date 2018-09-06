@@ -1,7 +1,7 @@
 package palindrome
 
 import (
-	//	"fmt"
+	"fmt"
 	"strings"
 )
 
@@ -37,58 +37,73 @@ Note:
 Third approach:
 
 */
+var (
+	visited = make(map[int]bool)
+)
+
 func longestPalindrome(s string) string {
-	switch len(s) {
-	case 0:
-		return ""
-	case 1:
-		return s
-	case 2:
-		return firstPalindrome(s)
+	n := int(len(s) / 2)
+	var longestPal string
+	for i := 0; i < n; i++ {
+		fmt.Printf("s: %s i:%d n: %d", s, i, n)
+		var x, y string
+		switch {
+		//ensure we don't hit ourselves
+		case n-i < 0:
+			x = getPalindrome(s, n+i)
+		case n+i > len(s)-1:
+			x = getPalindrome(s, n-i)
+		default:
+			x, y = getPalindrome(s, n-i), getPalindrome(s, n+i)
+		}
+		fmt.Printf(" x:%s y:%s longestPal: %s\n", x, y, longestPal)
+		switch {
+		case len(x) >= len(y) && len(x) > len(longestPal):
+			longestPal = x
+		case len(x) < len(y) && len(y) > len(longestPal):
+			longestPal = y
+		}
+	}
+	return longestPal
+
+}
+
+func getPalindrome(s string, index int) string {
+	c := strings.Split(s, "")
+
+	//get the maximum number of loops
+	max := maxIter(len(s), index)
+	//is this to the left or in the middle?
+
+	var offset int
+	l, r := index, index+1
+	if len(c)%2 != 0 && c[index] == c[index+1] {
+		offset = 1
+	}
+	for i := 0; i+offset <= max; i++ {
+		if c[index-i] != c[index+i+offset] {
+			return strings.Join(c[l:r+1], "")
+		}
+		l, r = index-i, index+i+offset
 	}
 
-	sl := strings.Split(s, "")
-	n := int(len(sl) / 2)
-	var o string
-	l, r := strings.Split(sl[:n], ""), strings.Split(sl[n-1:], "")
+	return strings.Join(c[l:r+1], "")
+}
 
-	//get the longest palidnrome for the next one.
-	left := longestPalindrome(strings.Join(l[:], ""))
-	right := longestPalindrome(strings.Join(l[:], ""))
-	if len(left) > len(right) {
-		return left
+func absVal(input int) int {
+	if input >= 0 {
+		return input
 	} else {
-		return right
+		return input * -1
 	}
 }
 
-func isPalindromic(s string) bool {
-	c := strings.Split(s, "")
-	n := int(len(c) / 2)
-	if len(c)%2 != 0 {
-		n -= 1
+func maxIter(length, index int) int {
+	var o int
+	if 0-(index) <= length-(index) {
+		o = absVal(0 - index)
+	} else {
+		o = absVal(length - index)
 	}
-	for i := n; i > 0; i-- {
-		if c[i] != c[len(c)-1-i] {
-			return false
-		}
-	}
-	return true
+	return o
 }
-
-func firstPalindrome(s string) string {
-	c := strings.Split(s, "")
-	for i := len(c); i >= 0; i-- {
-		e := strings.Join(c[0:i], "")
-		if isPalindromic(e) {
-			return e
-		}
-	}
-
-	return ""
-}
-
-// What would divide and conquer look like?
-//     Recursive, by defintion
-//          Early exit?
-//  If there is only one
