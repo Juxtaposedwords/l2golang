@@ -7,7 +7,7 @@ import (
 var LongestPalindrome = longestPalindrome
 var GetPalindrome = getPalindrome
 
-/*func TestLongestPalindrome(t *testing.T) {
+func TestLongestPalindrome(t *testing.T) {
 
 	tt := []struct {
 		have string
@@ -15,6 +15,8 @@ var GetPalindrome = getPalindrome
 	}{
 		{"dabad", "dabad"},
 		{"cbbd", "bb"},
+		{"a", "a"},
+		{"bb", "bb"},
 		{"dabadddddddddddddddddddddddddddddddddddd", "dddddddddddddddddddddddddddddddddddd"},
 		//		{"jrjnbctoqgzimtoklkxcknwmhiztomaofwwzjnhrijwkgmwwuazcowskjhitejnvtblqyepxispasrgvgzqlvrmvhxusiqqzzibcyhpnruhrgbzsmlsuacwptmzxuewnjzmwxbdzqyvsjzxiecsnkdibudtvthzlizralpaowsbakzconeuwwpsqynaxqmgngzpovauxsqgypinywwtmekzhhlzaeatbzryreuttgwfqmmpeywtvpssznkwhzuqewuqtfuflttjcxrhwexvtxjihunpywerkktbvlsyomkxuwrqqmbmzjbfytdddnkasmdyukawrzrnhdmaefzltddipcrhuchvdcoegamlfifzistnplqabtazunlelslicrkuuhosoyduhootlwsbtxautewkvnvlbtixkmxhngidxecehslqjpcdrtlqswmyghmwlttjecvbueswsixoxmymcepbmuwtzanmvujmalyghzkvtoxynyusbpzpolaplsgrunpfgdbbtvtkahqmmlbxzcfznvhxsiytlsxmmtqiudyjlnbkzvtbqdsknsrknsykqzucevgmmcoanilsyyklpbxqosoquolvytefhvozwtwcrmbnyijbammlzrgalrymyfpysbqpjwzirsfknnyseiujadovngogvptphuyzkrwgjqwdhtvgxnmxuheofplizpxijfytfabx", "qosoq"},
 	}
@@ -27,7 +29,7 @@ var GetPalindrome = getPalindrome
 	}
 
 }
-*/
+
 func TestGetPalindrome(t *testing.T) {
 
 	type h struct {
@@ -43,6 +45,8 @@ func TestGetPalindrome(t *testing.T) {
 		{&h{"adaddadd", 3}, "daddad"},
 		{&h{"adad", 3}, "d"},
 		{&h{"dddddd", 1}, "dddd"},
+		{&h{"a", 0}, "a"},
+		{&h{"bb", 0}, "bb"},
 	}
 
 	for _, v := range tt {

@@ -1,7 +1,7 @@
 package palindrome
 
 import (
-	//	"fmt"
+	"fmt"
 	"strings"
 )
 
@@ -42,27 +42,26 @@ var (
 )
 
 func longestPalindrome(s string) string {
-	n := int(len(s) / 2)
 	var longestPal string
-	for i := 0; i < n; i++ {
-		//	fmt.Printf("s: %s i:%d n: %d", s, i, n)
-		var x, y string
+	fmt.Println(s)
+	n := int(len(s) / 2)
+	l, r := n, n
+	if len(s)%2 == 0 {
+		r++
+	}
+	for l >= 0 && r < len(s) {
+		lv, rv := getPalindrome(s, l), getPalindrome(s, r)
+		fmt.Printf("s: %s l:%d r: %d lv: %s rv: %s\n", s, l, r, lv, rv)
 		switch {
-		//ensure we don't hit ourselves
-		case n-i < 0:
-			x = getPalindrome(s, n+i)
-		case n+i > len(s)-1:
-			x = getPalindrome(s, n-i)
-		default:
-			x, y = getPalindrome(s, n-i), getPalindrome(s, n+i)
+		case len(lv) < len(longestPal) || len(rv) < len(longestPal):
+			break
+		case len(lv) >= len(rv):
+			longestPal = lv
+		case len(lv) < len(rv):
+			longestPal = rv
 		}
-		//	fmt.Printf(" x:%s y:%s longestPal: %s\n", x, y, longestPal)
-		switch {
-		case len(x) >= len(y) && len(x) > len(longestPal):
-			longestPal = x
-		case len(x) < len(y) && len(y) > len(longestPal):
-			longestPal = y
-		}
+		l--
+		r++
 	}
 
 	return longestPal
@@ -72,55 +71,26 @@ func longestPalindrome(s string) string {
 func getPalindrome(s string, index int) string {
 	c := strings.Split(s, "")
 	l, r := index, index
+	switch {
 
+	case (len(c)-1)-index > 0 && c[index] == c[index+1]:
+		r++
+	}
 	//is this to the left or in the middle?
-
-	for l >= 0 && r < len(c) {
-		if c[l] != c[r] {
-			break
-		}
-		l--
-		r++
-	}
-	l++
-	r--
-	fl, fr := l, r
-
+	var bit bool
 	// let's search on even!
-	l, r = index, index+1
 	for l >= 0 && r < len(c) {
 		if c[l] != c[r] {
 			break
 		}
+		bit = true
 		l--
 		r++
 	}
-	l++
-	r--
-	if r-l > fr-fl {
-		return strings.Join(c[l:r+1], "")
-
-	} else {
-		return strings.Join(c[fl:fr+1], "")
-
+	if bit {
+		l++
+		r--
 	}
+	return strings.Join(c[l:r+1], "")
 
-}
-
-func absVal(input int) int {
-	if input >= 0 {
-		return input
-	} else {
-		return input * -1
-	}
-}
-
-func maxIter(length, index int) int {
-	var o int
-	if 0-(index) <= length-(index) {
-		o = absVal(0 - index)
-	} else {
-		o = absVal(length - index)
-	}
-	return o
 }
