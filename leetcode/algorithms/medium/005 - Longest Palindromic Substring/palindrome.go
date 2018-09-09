@@ -1,7 +1,7 @@
 package palindrome
 
 import (
-	"fmt"
+	//	"fmt"
 	"strings"
 )
 
@@ -45,7 +45,7 @@ func longestPalindrome(s string) string {
 	n := int(len(s) / 2)
 	var longestPal string
 	for i := 0; i < n; i++ {
-		fmt.Printf("s: %s i:%d n: %d", s, i, n)
+		//	fmt.Printf("s: %s i:%d n: %d", s, i, n)
 		var x, y string
 		switch {
 		//ensure we don't hit ourselves
@@ -56,7 +56,7 @@ func longestPalindrome(s string) string {
 		default:
 			x, y = getPalindrome(s, n-i), getPalindrome(s, n+i)
 		}
-		fmt.Printf(" x:%s y:%s longestPal: %s\n", x, y, longestPal)
+		//	fmt.Printf(" x:%s y:%s longestPal: %s\n", x, y, longestPal)
 		switch {
 		case len(x) >= len(y) && len(x) > len(longestPal):
 			longestPal = x
@@ -64,30 +64,47 @@ func longestPalindrome(s string) string {
 			longestPal = y
 		}
 	}
+
 	return longestPal
 
 }
 
 func getPalindrome(s string, index int) string {
 	c := strings.Split(s, "")
+	l, r := index, index
 
-	//get the maximum number of loops
-	max := maxIter(len(s), index)
 	//is this to the left or in the middle?
 
-	var offset int
-	l, r := index, index+1
-	if len(c)%2 != 0 && c[index] == c[index+1] {
-		offset = 1
-	}
-	for i := 0; i+offset <= max; i++ {
-		if c[index-i] != c[index+i+offset] {
-			return strings.Join(c[l:r+1], "")
+	for l >= 0 && r < len(c) {
+		if c[l] != c[r] {
+			break
 		}
-		l, r = index-i, index+i+offset
+		l--
+		r++
+	}
+	l++
+	r--
+	fl, fr := l, r
+
+	// let's search on even!
+	l, r = index, index+1
+	for l >= 0 && r < len(c) {
+		if c[l] != c[r] {
+			break
+		}
+		l--
+		r++
+	}
+	l++
+	r--
+	if r-l > fr-fl {
+		return strings.Join(c[l:r+1], "")
+
+	} else {
+		return strings.Join(c[fl:fr+1], "")
+
 	}
 
-	return strings.Join(c[l:r+1], "")
 }
 
 func absVal(input int) int {
