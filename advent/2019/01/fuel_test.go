@@ -26,7 +26,7 @@ func TestRequired(t *testing.T) {
 		},
 		{
 			desc: "free fuel upper limit",
-			have: 6,
+			have: 8,
 			want: 0,
 		},
 		{ 
@@ -75,7 +75,7 @@ func TestReadInts(t *testing.T) {
 		},
 		{
 			desc: "Largest possible value",
-			have: strings.NewReader(fmt.Sprintf("%d",uint64(^uint64(0)/3)-2)),
+			have: strings.NewReader(fmt.Sprintf("%d",^uint64(0))),
 			wantResp:  uint64(^uint64(0)/3)-2,
 		},
 		{
