@@ -3,7 +3,6 @@ package fuel
 import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-//	"github.com/google/logger"
 	"io"
 	"strconv"
 	"bufio"
@@ -11,11 +10,13 @@ import (
 )
 
 const maxUINT64 = ^uint64(0)
+
 func required(input uint64) uint64 {
 	if input < 7 {
 		return 0
 	}
-	return uint64(input/3) - 2
+	requiredFuel := uint64(input/3) - 2
+	return requiredFuel + required(requiredFuel) 
 }
 
 func totalRequired(inputs []uint64) uint64 {
@@ -28,7 +29,7 @@ func totalRequired(inputs []uint64) uint64 {
 
 // ReadFuel takes in the path to a file which contains all the weights you have.
 //  The amount of fuel necessary for each item is computed and added to a running 
-//  sum which is returned at the end. 
+//  sum which is returned at the end.  
 func ReadFuel(filepath string) (uint64, error) {
 	f, err := os.Open(filepath)
 	if err != nil {

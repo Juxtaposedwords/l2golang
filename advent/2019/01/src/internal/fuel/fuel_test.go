@@ -2,7 +2,6 @@ package fuel
 
 import (
 	"testing"
-	"fmt"
 	"io"
 	"strings"
 	"google.golang.org/grpc/codes"
@@ -37,12 +36,7 @@ func TestRequired(t *testing.T) {
 		{
 			desc: "upper limit of input",
 			have: 18446744073709551615,
-			want: 6148914691236517203,
-		},
-		{
-			desc: "input too large input",
-			have: 18446744073709551615,
-			want: 6148914691236517203,
+			want: 9223372036854775669,
 		},
 	}
 	for _, tc := range tests {
@@ -72,11 +66,6 @@ func TestReadInts(t *testing.T) {
 			desc: "0 valued",
 			have:  strings.NewReader("0 0 0 1 2 3 4 5 6 7 8"),
 						wantResp: 0,
-		},
-		{
-			desc: "Largest possible value",
-			have: strings.NewReader(fmt.Sprintf("%d",^uint64(0))),
-			wantResp:  uint64(^uint64(0)/3)-2,
 		},
 		{
 			desc: "uint overflow",
