@@ -1,54 +1,57 @@
 package geo
+
 import (
 	"fmt"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	"regexp"
 	"strconv"
 	"strings"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
 type location struct {
-	x int
-	y int
+	x    int
+	y    int
+	step int
 }
-type cardinality int 
+type cardinality int
+
 const (
-	up cardinality = iota +1
+	up cardinality = iota + 1
 	down
-	left 
-	right 
+	left
+	right
 )
 
 var (
-	directionRE  = regexp.MustCompile(`^[UDRL]\d+$`)
+	directionRE = regexp.MustCompile(`^[UDRL]\d+$`)
 )
 
-// ClosestIntersection gives the closest intersection of the two list of coordinates. 
-func ClosestIntersection( left, right []string) (int, error) {
+// ClosestIntersection gives the closest intersection of the two list of coordinates.
+func ClosestIntersection(left, right []string) (int, error) {
 	leftLocations, err := getLocations(left)
 	if err != nil {
 		return 0, err
 	}
-	rightLocations,err := getLocations(right)
+	rightLocations, err := getLocations(right)
 	if err != nil {
 		return 0, err
 	}
 	leftVisits := map[string]bool{}
 	for _, loc := range leftLocations {
-		leftVisits[fmt.Sprintf("%03d%03d",loc.x,loc.y)] = true
+		leftVisits[fmt.Sprintf("%03d%03d", loc.x, loc.y)] = true
 	}
-	
+
 	var lowestDistance int
 	for _, loc := range rightLocations {
-		if !leftVisits[fmt.Sprintf("%03d%03d",loc.x,loc.y)]{
+		if !leftVisits[fmt.Sprintf("%03d%03d", loc.x, loc.y)] {
 			continue
-		}  
-		if  lowestDistance ==  0 || taxiDistance(loc) < lowestDistance{
-				lowestDistance = taxiDistance(loc)
-			}
-		} 
-	
+		}
+		if lowestDistance == 0 || taxiDistance(loc) < lowestDistance {
+			lowestDistance = taxiDistance(loc)
+		}
+	}
+
 	return lowestDistance, nil
 }
 
@@ -56,25 +59,25 @@ func taxiDistance(loc *location) int {
 	return absVal(loc.x) + absVal(loc.y)
 }
 
-func absVal(input int ) int {
+func absVal(input int) int {
 	if input < 0 {
 		return input * -1
 	}
 	return input
 }
 
-func getLocations( directions []string ) ([]*location, error) {
+func getLocations(directions []string) ([]*location, error) {
 	if len(directions) == 0 {
 		return nil, status.Error(codes.FailedPrecondition, "empty slice provided")
 	}
 	locs := map[string]*location{}
-	x, y := 0,0
-	for _, instruction:=range  directions{
+	step, x, y := 0, 0, 0
+	for _, instruction := range directions {
 		dir, dist, err := parse(instruction)
 		if err != nil {
-			return nil,err
+			return nil, err
 		}
-		for i:= 0; i <dist; i++ {
+		for i := 0; i < dist; i++ {
 			switch dir {
 			case up:
 				x++
@@ -85,31 +88,34 @@ func getLocations( directions []string ) ([]*location, error) {
 			case right:
 				y++
 			}
-			locs[fmt.Sprintf("%03d%03d",x,y)] = &location{x: x, y:y}
+			
+			if  _, ok := locs[fmt.Sprintf("%03d%03d", x, y)]; !ok {
+				locs[fmt.Sprintf("%03d%03d", x, y)] = &location{x: x, y: y, step: step}
+			}
 		}
 	}
 	var output []*location
 	for _, value := range locs {
-		output = append(output,value)
+		output = append(output, value)
 	}
 	return output, nil
 }
 
-func parse(input string) (cardinality,int, error) {
-	if ! directionRE.MatchString(input){
-		return 0,0, status.Error(codes.InvalidArgument, "input does not match a valid direction")
+func parse(input string) (cardinality, int, error) {
+	if !directionRE.MatchString(input) {
+		return 0, 0, status.Error(codes.InvalidArgument, "input does not match a valid direction")
 	}
 	characters := strings.Split(input, "")
-	distance, _ :=strconv.Atoi(strings.Join(characters[1:],""))
+	distance, _ := strconv.Atoi(strings.Join(characters[1:], ""))
 	switch characters[0] {
 	case "U":
-		return up,distance, nil
+		return up, distance, nil
 	case "D":
-		return down,distance, nil
+		return down, distance, nil
 	case "L":
-		return left,distance, nil
+		return left, distance, nil
 	case "R":
-		return right,distance, nil
+		return right, distance, nil
 	}
-	return 0,0, nil
+	return 0, 0, nil
 }
