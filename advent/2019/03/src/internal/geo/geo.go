@@ -137,13 +137,13 @@ func getLocations(directions []string) ([]*location, error) {
 			step++
 			switch dir {
 			case up:
-				x++
-			case down:
-				x--
-			case left:
-				y--
-			case right:
 				y++
+			case down:
+				y--
+			case left:
+				x--
+			case right:
+				x++
 			}
 
 			if _, ok := locs[fmt.Sprintf("%03d%03d", x, y)]; !ok {
