@@ -134,6 +134,7 @@ func getLocations(directions []string) ([]*location, error) {
 			return nil, err
 		}
 		for i := 0; i < dist; i++ {
+			step++
 			switch dir {
 			case up:
 				x++
