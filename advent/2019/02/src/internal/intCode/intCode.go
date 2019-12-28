@@ -1,7 +1,7 @@
 package intCode
 
 import (
-	"github.com/google/logger"
+//	"github.com/google/logger"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -33,7 +33,6 @@ func BrutePair(input []int, target int) (int, int, error) {
 				output[1], output[2] = noun, verb
 				resp, err := List(output)
 				if err != nil {
-					errs <- err
 				} else if resp[0] == target {
 					answer <- &pair{noun:noun,verb:verb}
 				}
@@ -50,7 +49,6 @@ func BrutePair(input []int, target int) (int, int, error) {
 		return r.noun,r.verb, nil
 	default:
 	}
-	logger.Info("never made it to execute")
 
 	return 0, 0, status.Error(codes.NotFound, "unable to find a posible pair")
 
