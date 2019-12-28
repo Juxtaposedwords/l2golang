@@ -17,6 +17,14 @@ type pair struct {
 	verb   int
 	noun   int
 }
+type opCode int
+
+const (
+	UNKNOWN opCode = iota 
+	Add  
+	Multiply  
+	Terminate  opCode  = 99
+)
 
 // BrutePair uses brute force to find all possible combinations of noun and verbs.
 func BrutePair(input []int, target int) (int, int, error) {
@@ -58,36 +66,34 @@ func BrutePair(input []int, target int) (int, int, error) {
 func List(input []int) ([]int, error) {
 	output := make([]int, len(input))
 	copy(output, input)
-	opcodes := map[int]bool{
-		1:  true,
-		2:  true,
-		99: true}
-
 	for i := 0; i < len(output); i = i + 4 {
-		opcode, ok := output[i], opcodes[output[i]]
-		switch {
-		case opcode == 99:
+		operation := opCode(output[i])
+		switch operation {
+		case  Terminate:
 			return output, nil
-		case !ok:
+		case UNKNOWN:
 			return nil, status.Error(codes.InvalidArgument, "incorrectly shaped")
-		case len(output[i:]) <= 4:
+		}
+
+
+		if len(output[i:]) < 4 {
 			return nil, status.Error(codes.InvalidArgument, "incorrectly shaped")
 		}
 
 		first, second, target := output[i+1], output[i+2], output[i+3]
 		switch {
 		case first >= len(output):
-			return nil, status.Errorf(codes.FailedPrecondition, "index %d is greater than the length of input(length: %d", first, len(input))
+			return nil, status.Errorf(codes.FailedPrecondition, "first index %d is greater than the length of input(length: %d", first, len(input))
 		case second >= len(output):
-			return nil, status.Errorf(codes.FailedPrecondition, "index %d is greater than the length of input(length: %d", second, len(input))
+			return nil, status.Errorf(codes.FailedPrecondition, "second index %d is greater than the length of input(length: %d", second, len(input))
 		case target >= len(output):
 			return nil, status.Errorf(codes.FailedPrecondition, "index %d is greater than the length of input(length: %d", second, len(input))
 		}
 
-		switch opcode {
-		case 1:
+		switch operation {
+		case Add:
 			output[target] = output[first] + output[second]
-		case 2:
+		case Multiply:
 			output[target] = output[first] * output[second]
 
 		}
