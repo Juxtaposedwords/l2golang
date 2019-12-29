@@ -24,6 +24,6 @@ How many different passwords within the range given in your puzzle input meet th
 
  * The problem reads as a math problem
     * The problem is a permutation problem that is fairly basic. 
-    * I'm a bit rusty with [permutations](https://math.stackexchange.com/questions/531231/find-all-permutations-in-increasing-order). 
+    * I'm a bit rusty with [permutations](https://math.stackexchange.com/questions/336734/combinatorics-how-to-find-the-number-of-sets-of-numbers-in-increasing-order/336768#336768). 
 * Next step:
     * Read up on stackexchange for math, look more into formal permutation/combinations
