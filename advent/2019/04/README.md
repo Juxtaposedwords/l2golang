@@ -24,8 +24,13 @@ How many different passwords within the range given in your puzzle input meet th
 ### First Reading
 
 * The problem is either:
-    *  a straightforward computer science problem with a runtime of n! 
-        * 
+    *  a straightforward computer science problem
+        * **Brute Force(time:n*m space: n)**
+            1.  For every number startign with the lowest possible combination and ending with the highest, issue a go routine which:
+                a. Split the number into an array of ints
+                b. Exit if there is no double or the array ever decreases
+                c. Issue a counter
+                    * Here we can use `sync/atomic`, which is hacky but works
     * an interesting combinatorics problem with a runtime of n
         * A solution without the range limits [is covered on math.stackechange](https://math.stackexchange.com/questions/336734/combinatorics-how-to-find-the-number-of-sets-of-numbers-in-increasing-order/336768#336768).  
         * I lack experience with combinatorics sadly, so it's speculation as to how tackle/estimate.
