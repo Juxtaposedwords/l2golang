@@ -9,32 +9,7 @@ import (
 	"sync/atomic"
 )
 
-/*Brute uses brute force approach to find all the possible combinations of possibilie between the two numbers in which all options in which no digit is descending and there are at least two repeated digits.
- */
-func Brute(lower, upper int) (int, error) {
-	switch {
-	case digits(lower) != digits(upper):
-		return 0, status.Errorf(codes.InvalidArgument, "different digit lengths: lower %d upper %d ", lower, upper)
-	case lower > upper:
-		return 0, status.Errorf(codes.InvalidArgument, "lower greater than upper: lower %d upper %d ", lower, upper)
-	}
-	var result int32
-	var wg sync.WaitGroup
-	for i := lower; i <= upper; i++ {
-
-		wg.Add(1)
-		go func(digit int) {
-			if valid(digit) {
-				atomic.AddInt32(&result, 1)
-			}
-			wg.Done()
-		}(i)
-	}
-	wg.Wait()
-	return int(result), nil
-}
-
-/*Permutations uses a recursive programming solution to find all possible solutions between the two provided bounds.
+/*Permutations uses a look ahead approach per digit to find all the possible combinations of possibilie between the two numbers in which all options in which no digit is descending and there are at least two repeated digits.
  */
 func Permutations(lower, upper int) (int, error) {
 	switch {
@@ -45,20 +20,21 @@ func Permutations(lower, upper int) (int, error) {
 	case digits(lower) == 1:
 		return 0, nil
 	}
-	
+
 	var combinations int
-	for i := lower+1; i < upper; i++ {
+	for i := lower + 1; i < upper; i++ {
 		logger.Infof("i: %d\n", i)
-		var repeat bool
-		i, repeat = valid2(intToSlice(i))
-		if repeat {
+		var repeats bool
+		i, repeats = digitValidation(i)
+		if repeats {
 			combinations++
 		}
 	}
 	return combinations, nil
 }
 
-func valid2(digits []int) (int, bool) {
+func digitValidation(input int) (int, bool) {
+	digits := intToSlice(input)
 	lowest := digits[0]
 	var repeat bool
 	for j := 1; j < len(digits); j++ {
@@ -76,13 +52,7 @@ func valid2(digits []int) (int, bool) {
 	}
 	return sliceToInt(digits), repeat
 }
-func setter(index int, input []int) int {
-	for i := index; index < len(input); i++ {
-		input[i] = input[index]
-	}
-	return sliceToInt(input)
 
-}
 func digits(i int) (count int) {
 	for i != 0 {
 		i /= 10
@@ -100,7 +70,31 @@ func sliceToInt(s []int) int {
 	}
 	return res
 }
-func valid(input int) bool {
+
+// brute uses brute case to find all possible permutations. The function is not inteded for external use, but strictly for help in the creation of test cases.
+func brute(lower, upper int) (int, error) {
+	switch {
+	case digits(lower) != digits(upper):
+		return 0, status.Errorf(codes.InvalidArgument, "different digit lengths: lower %d upper %d ", lower, upper)
+	case lower > upper:
+		return 0, status.Errorf(codes.InvalidArgument, "lower greater than upper: lower %d upper %d ", lower, upper)
+	}
+	var result int32
+	var wg sync.WaitGroup
+	for i := lower; i <= upper; i++ {
+
+		wg.Add(1)
+		go func(digit int) {
+			if validBrute(digit) {
+				atomic.AddInt32(&result, 1)
+			}
+			wg.Done()
+		}(i)
+	}
+	wg.Wait()
+	return int(result), nil
+}
+func validBrute(input int) bool {
 	var intSlice []int
 	intSlice = intToSlice(input)
 	if len(intSlice) == 1 {
@@ -119,7 +113,6 @@ func valid(input int) bool {
 		return false
 	}
 	return true
-
 }
 func recurIntToSlice(input int, output []int) []int {
 	if input != 0 {
