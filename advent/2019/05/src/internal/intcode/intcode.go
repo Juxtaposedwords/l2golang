@@ -64,7 +64,7 @@ func (m *machine) print(input *operations.InstructionSet) error {
 	if err != nil {
 		return err
 	}
-	m.output = append(m.output,val)
+	m.output = append(m.output, val)
 	m.index += 2
 	return nil
 }
@@ -124,7 +124,7 @@ func (m *machine) compare(input *operations.InstructionSet) error {
 		output = 1
 	}
 	m.tape[target] = output
-	m.index += 2
+	m.index += 4
 	return nil
 }
 
@@ -154,7 +154,7 @@ func (m *machine) advance() (bool, error) {
 func Process(input []int, inputInstruction int) ([]int, error) {
 	logger.Init("LoggerExample", true, false, ioutil.Discard)
 	mach := &machine{
-		tape: input,
+		tape:  input,
 		input: inputInstruction,
 	}
 	var finished bool
@@ -170,7 +170,7 @@ func Process(input []int, inputInstruction int) ([]int, error) {
 
 // DiagnosticCode steps through the code performing mutations as opcode instruct.
 func DiagnosticCode(input []int, inputInstruction int) (int, error) {
-	machineOutput, err := Process(input,inputInstruction)
+	machineOutput, err := Process(input, inputInstruction)
 	if err != nil {
 		return 0, err
 	}
@@ -182,4 +182,3 @@ func DiagnosticCode(input []int, inputInstruction int) (int, error) {
 	}
 	return diagnosticCode, nil
 }
-
