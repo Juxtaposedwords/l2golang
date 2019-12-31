@@ -50,7 +50,7 @@ func TestBrute(t *testing.T) {
 		tc := tc
 		t.Run(tc.desc, func(t *testing.T) {
 			t.Parallel()
-			got, err := Brute(tc.haveLower, tc.haveUppper)
+			got, err := brute(tc.haveLower, tc.haveUppper)
 			if got, want := status.Code(err), status.Code(tc.wantError); got != want {
 				t.Errorf("Brute() unexpected error. want: %s got: %s", want, got)
 				return
@@ -73,32 +73,32 @@ func TestPermutations(t *testing.T) {
 			desc:       "happyPath",
 			haveLower:  11,
 			haveUppper: 12,
-			want:       0,
+			want:       1,
 		},
 		{
 			desc:       "two digits",
 			haveLower:  11,
 			haveUppper: 99,
-			want:       7,
+			want:       9,
 		},
 		{
 			desc:       "small input",
 			haveLower:  122,
-			haveUppper: 986,
-			want:       70,
+			haveUppper: 200,
+			want:       8,
 		},
-		{
+ 		{
 			desc:       "large input",
 			haveLower:  125730,
 			haveUppper: 579381,
-			want:       2081,
+			want:       1411,
 		},
 		{
 			desc:       "lower and upper equal",
 			haveLower:  22,
 			haveUppper: 22,
-			want:       0,
-		},
+			want:       1,
+		}, 
 		{
 			desc:       "lower > upper",
 			haveLower:  12,
@@ -115,7 +115,7 @@ func TestPermutations(t *testing.T) {
 	for _, tc := range tests {
 		tc := tc
 		t.Run(tc.desc, func(t *testing.T) {
-			t.Parallel()
+		//	t.Parallel()
 			got, err := Permutations(tc.haveLower, tc.haveUppper)
 			if got, want := status.Code(err), status.Code(tc.wantError); got != want {
 				t.Errorf("Permutations() unexpected error. want: %s got: %s", want, got)
