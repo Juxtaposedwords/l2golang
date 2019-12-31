@@ -25,13 +25,13 @@ How many different passwords within the range given in your puzzle input meet th
 
 * The problem is either:
     *  a straightforward computer science problem
-        * **Brute Force(time:6^n space: n)**
-            1.  For every number startign with the lowest possible combination and ending with the highest, issue a go routine which:
+        * **Brute Force(time:m (where m is the numbers between lower and upper bound) space: constant)**
+            1.  For every number starting with the lowest possible combination and ending with the highest, issue a go routine which:
                 a. Split the number into an array of ints
                 b. Exit if there is no double or the array ever decreases
                 c. Issue a counter
                     * Here we can use `sync/atomic`, which is hacky but works
-        * **LookAhead(time: logN space: 1)**
+        * **LookAhead(time: n^2 (where n is the number of digits) space: constant)**
             1. For every number between lower and upper. 
                 a. check every digit:
                     * look at the next digit and compare it to the current:
