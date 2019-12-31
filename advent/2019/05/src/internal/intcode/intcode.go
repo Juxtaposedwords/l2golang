@@ -20,9 +20,7 @@ func Process(input []int, inputInstruction int) ([]int, error) {
 			return nil, err
 		}
 		opLength = operations.CodeLength[instructions.Operation]
-		logger.Infof("input[%d] = %d digits: %#v", i, input[i], input[i:])
-
-		logger.Infof("oplength: %d\n", opLength)
+		logger.Infof("input[%d] = %d digits: %#v", i, input[i], input)
 		if len(input[i:]) < opLength {
 			return nil, status.Error(codes.FailedPrecondition, "incorrectly sized int list")
 		}
@@ -30,7 +28,12 @@ func Process(input []int, inputInstruction int) ([]int, error) {
 		case operations.Terminate:
 			return output, nil
 		case operations.Print:
-			output = append(output, input[input[i+1]])
+			if instructions.First == operations.Immediate {
+				output = append(output, input[i+1])
+			} else {
+				output = append(output, input[input[i+1]])
+			}
+			logger.Infof("outputting %d", input[input[i+1]])
 		default:
 			if err := mutate(instructions, i, input, inputInstruction); err != nil {
 				return nil, err
@@ -42,6 +45,7 @@ func Process(input []int, inputInstruction int) ([]int, error) {
 }
 
 func mutate(instructions *operations.InstructionSet, index int, input []int, inputInstruction int) error {
+
 	targetIndex := input[index+operations.CodeLength[instructions.Operation]-1]
 
 	first, second := input[index+1], input[index+2]
@@ -51,13 +55,18 @@ func mutate(instructions *operations.InstructionSet, index int, input []int, inp
 	if instructions.Second == operations.Position {
 		second = input[second]
 	}
+
 	switch instructions.Operation {
 	case operations.Copy:
+		logger.Infof("copy  input[%d] = %d", targetIndex, inputInstruction)
+
 		input[targetIndex] = inputInstruction
 	case operations.Multiply:
+		logger.Infof("multi input[%d] = %d * %d", targetIndex, first, second)
+
 		input[targetIndex] = first * second
 	case operations.Add:
-		//	logger.Infof("adding:  digits %#v\n", input)
+		logger.Infof("add   input[%d] = %d+%d", targetIndex, first, second)
 
 		input[targetIndex] = first + second
 		//		logger.Infof("adding:  digits %#v\n", input)
