@@ -2,11 +2,11 @@ package operations
 
 import (
 	"fmt"
-	"strings"
-	"io/ioutil"
 	"github.com/google/logger"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"io/ioutil"
+	"strings"
 )
 
 // Code tells us the operations which can be taken.
@@ -86,7 +86,7 @@ func Parse(input int) (*InstructionSet, error) {
 	}
 
 	digits := strings.Split(paddedInput, "")
-	logger.Infof(" input: %d %#v",input, digits)
+	logger.Infof(" input: %d %#v", input, digits)
 	opCode, ok := codeMap[fmt.Sprintf("%s%s", digits[3], digits[4])]
 	if !ok {
 		return nil, status.Errorf(codes.InvalidArgument, "invalid operation Code ('%s') provided", fmt.Sprintf("%s%s", digits[3], digits[4]))

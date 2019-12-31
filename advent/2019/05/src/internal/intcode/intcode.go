@@ -49,6 +49,7 @@ func (m machine) threeParams(input *operations.InstructionSet) (int, int, int, e
 	if input.Second == operations.Position {
 		second = m.tape[second]
 	}
+
 	return first, second, third, nil
 }
 func (m *machine) copy(input *operations.InstructionSet) error {
@@ -165,5 +166,20 @@ func Process(input []int, inputInstruction int) ([]int, error) {
 		}
 	}
 	return mach.output, nil
+}
+
+// DiagnosticCode steps through the code performing mutations as opcode instruct.
+func DiagnosticCode(input []int, inputInstruction int) (int, error) {
+	machineOutput, err := Process(input,inputInstruction)
+	if err != nil {
+		return 0, err
+	}
+	checks, diagnosticCode := machineOutput[:len(machineOutput)-1], machineOutput[len(machineOutput)-1]
+	for _, e := range checks {
+		if e != 0 {
+			return 0, status.Errorf(codes.Internal, "non 0 value before execution")
+		}
+	}
+	return diagnosticCode, nil
 }
 
