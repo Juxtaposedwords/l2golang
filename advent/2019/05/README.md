@@ -54,6 +54,19 @@ After providing 1 to the only input instruction and passing all the tests, what 
 
 ### Notes
 
+
+* Example:
+```
+ABCDE
+ 1002
+
+DE - two-digit opcode,      02 == opcode 2
+ C - mode of 1st parameter,  0 == position mode
+ B - mode of 2nd parameter,  1 == immediate mode
+ A - mode of 3rd parameter,  0 == position mode,
+                                  omitted due to being a leading zero
+```
+
 * Instruction Packets 
     * An integer representation of [param C mode][param B mode][param A mode][opCode]
 * OpCodes
@@ -66,7 +79,9 @@ After providing 1 to the only input instruction and passing all the tests, what 
     * 0 - position - use integer value as index
     * 1 - immediate - use integer values of param, not index
 
-
+** Examples:
+    * Note: `1` is sill a fine opCode as the leading digits can all be considered to be 0's.
+        * For this reason i'll likely just padd 0s.
 
 * concerns 
     * How would an 01103 work?
