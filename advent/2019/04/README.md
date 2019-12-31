@@ -21,7 +21,7 @@ Question:
 How many different passwords within the range given in your puzzle input meet these criteria?
 ```
 
-### First Reading
+### Notes
 
 * The problem is either:
     *  a straightforward computer science problem
@@ -39,7 +39,7 @@ How many different passwords within the range given in your puzzle input meet th
                         ii. **greater** great
                         iii. **equal** Make a note you saw a repeat
                 b. Increment if we saw a repeat and didn't have to skip
-    * an interesting combinatorics problem with a runtime of sub logN
+    * an interesting combinatorics problem with a runtime of sub logN (much like Binet's formula for Fibonacci)
         * A solution without the range limits [is covered on math.stackechange](https://math.stackexchange.com/questions/336734/combinatorics-how-to-find-the-number-of-sets-of-numbers-in-increasing-order/336768#336768).  
         * I lack experience with combinatorics sadly, so it's speculation as to how tackle/estimate.
 
@@ -58,3 +58,8 @@ Given this additional criterion, but still ignoring the range rule, the followin
 How many different passwords within the range given in your puzzle input meet all of the criteria?
 ```
 
+### Notes
+* The author says that anything repeat that is in a group larger than two does not count as our double. By this reasoning one is fine, two is not, as 4 is in a group of 3.
+* Since we check for increasing earlier in our vetting process, we can:
+    1. record each time we see a digit. 
+    2. check if we ever a digit which occured twice. 
