@@ -67,29 +67,6 @@ func BrutePair(input []int, target int) (int, int, error) {
 
 }
 
-func Mutate(input []int, index int) error {
-	for i := 0; i < len(input); i += 4 {
-		operation := opCode(input[i])
-		switch {
-		case operation == terminate:
-			return nil
-		case operation == unknown:
-			return status.Error(codes.InvalidArgument, "incorrectly shaped")
-		case len(input[i:]) < 4:
-			return status.Error(codes.FailedPrecondition, "incorrect number of items to the right of operator")
-		}
-		first, second, target := input[i+1], input[i+2], input[i+3]
-
-		switch operation {
-		case add:
-			input[target] = first + second
-		case multiply:
-			input[target] = first * second
-		}
-	}
-	return nil
-}
-
 // List steps through the code performing mutations where necessary.
 func List(input []int) ([]int, error) {
 	output := make([]int, len(input))
