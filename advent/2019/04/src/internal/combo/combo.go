@@ -1,7 +1,8 @@
 package combo
 
 import (
-	"github.com/google/logger"
+//"github.com/google/logger"
+//	"io/ioutil"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
@@ -12,6 +13,8 @@ import (
 /*Permutations uses a look ahead approach per digit to find all the possible combinations of possibilie between the two numbers in which all options in which no digit is descending and there are at least two repeated digits.
  */
 func Permutations(lower, upper int) (int, error) {
+	//defer logger.Init("LoggerExample", true, false, ioutil.Discard)
+
 	switch {
 	case digits(lower) != digits(upper):
 		return 0, status.Errorf(codes.InvalidArgument, "different digit lengths: lower %d upper %d ", lower, upper)
@@ -22,11 +25,11 @@ func Permutations(lower, upper int) (int, error) {
 	}
 
 	var combinations int
-	for i := lower + 1; i < upper; i++ {
-		logger.Infof("i: %d\n", i)
+	for i := lower ; i <= upper; i++ {
 		var repeats bool
 		i, repeats = digitValidation(i)
 		if repeats {
+//		logger.Infof("i: %d\n", i)
 			combinations++
 		}
 	}
@@ -36,7 +39,8 @@ func Permutations(lower, upper int) (int, error) {
 func digitValidation(input int) (int, bool) {
 	digits := intToSlice(input)
 	lowest := digits[0]
-	var repeat bool
+	observed := map[int]int{lowest:1}
+	var valid bool
 	for j := 1; j < len(digits); j++ {
 		switch {
 		case digits[j] < lowest:
@@ -45,12 +49,17 @@ func digitValidation(input int) (int, bool) {
 			}
 			return sliceToInt(digits) - 1, false
 		case digits[j] == lowest:
-			repeat = true
 		default:
 			lowest = digits[j]
 		}
+		observed[digits[j]]++
 	}
-	return sliceToInt(digits), repeat
+	for _, v := range observed{
+		if v == 2 {
+			valid=true
+		}
+	}
+	return sliceToInt(digits), valid
 }
 
 func digits(i int) (count int) {
