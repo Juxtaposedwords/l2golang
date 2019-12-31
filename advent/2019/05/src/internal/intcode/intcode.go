@@ -1,11 +1,9 @@
 package intcode
 
 import (
-	"github.com/google/logger"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"internal/operations"
-	"io/ioutil"
 )
 
 type machine struct {
@@ -152,7 +150,6 @@ func (m *machine) advance() (bool, error) {
 
 // Process steps through the code performing mutations as opcode instruct.
 func Process(input []int, inputInstruction int) ([]int, error) {
-	logger.Init("LoggerExample", true, false, ioutil.Discard)
 	mach := &machine{
 		tape:  input,
 		input: inputInstruction,

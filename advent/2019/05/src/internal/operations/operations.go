@@ -2,10 +2,8 @@ package operations
 
 import (
 	"fmt"
-	"github.com/google/logger"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"io/ioutil"
 	"strings"
 )
 
@@ -78,7 +76,6 @@ type InstructionSet struct {
 
 // Parse turns an operation Code into an output of an instruction set.
 func Parse(input int) (*InstructionSet, error) {
-	logger.Init("LoggerExample", true, false, ioutil.Discard)
 
 	paddedInput := fmt.Sprintf("%05d", input)
 	if len(paddedInput) > 5 {
@@ -86,7 +83,6 @@ func Parse(input int) (*InstructionSet, error) {
 	}
 
 	digits := strings.Split(paddedInput, "")
-	logger.Infof(" input: %d %#v", input, digits)
 	opCode, ok := codeMap[fmt.Sprintf("%s%s", digits[3], digits[4])]
 	if !ok {
 		return nil, status.Errorf(codes.InvalidArgument, "invalid operation Code ('%s') provided", fmt.Sprintf("%s%s", digits[3], digits[4]))
