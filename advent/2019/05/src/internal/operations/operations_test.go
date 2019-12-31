@@ -15,7 +15,7 @@ func TestParse(t *testing.T) {
 		wantErrorCode codes.Code
 	}{
 		{
-			desc: "create add insturctions",
+			desc: "create add insturctions with padded 0's",
 			have: 1,
 			wantResp: &InstructionSet{
 				Operation: Add,
