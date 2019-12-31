@@ -3,8 +3,7 @@ package operations
 import (
 	"fmt"
 	"strings"
-//	"github.com/google/logger"
-// 	"io/ioutil"
+
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -33,6 +32,15 @@ var codeMap = map[string]Code{
 	"99": Terminate,
 }
 
+// CodeLength is a way to store some metadata about instructions.
+var CodeLength = map[Code]int{
+	Add:       4,
+	Multiply:  4,
+	Copy:      2,
+	Print:     2,
+	Terminate: 0,
+}
+
 // Mode represents the two ways to write.
 type Mode int
 
@@ -58,7 +66,6 @@ type InstructionSet struct {
 
 // Parse turns an operation Code into an output of an instruction set.
 func Parse(input int) (*InstructionSet, error) {
-//	defer logger.Init("LoggerExample", true, false, ioutil.Discard)
 
 	paddedInput := fmt.Sprintf("%05d", input)
 	if len(paddedInput) > 5 {
@@ -68,7 +75,7 @@ func Parse(input int) (*InstructionSet, error) {
 	digits := strings.Split(paddedInput, "")
 	opCode, ok := codeMap[fmt.Sprintf("%s%s", digits[3], digits[4])]
 	if !ok {
-		return nil, status.Error(codes.InvalidArgument, "invalid operation Code provided")
+		return nil, status.Errorf(codes.InvalidArgument, "invalid operation Code ('%s') provided", fmt.Sprintf("%s%s", digits[3], digits[4]))
 	}
 
 	first, firstOK := modeMap[digits[2]]

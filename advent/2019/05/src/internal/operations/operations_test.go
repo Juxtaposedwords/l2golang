@@ -34,33 +34,31 @@ func TestParse(t *testing.T) {
 				Third:     Immediate,
 			},
 		},
-
 		{
-			desc: "int too long",
-			have: 8675309,
+			desc:          "int too long",
+			have:          8675309,
 			wantErrorCode: codes.FailedPrecondition,
 		},
 		{
-			desc: "invalid operation code",
-			have: 87,
+			desc:          "invalid operation code",
+			have:          87,
 			wantErrorCode: codes.InvalidArgument,
 		},
 		{
-			desc: "invalid first mode",
-			have: 201,
+			desc:          "invalid first mode",
+			have:          201,
 			wantErrorCode: codes.InvalidArgument,
 		},
 		{
-			desc: "invalid second mode",
-			have: 2001,
+			desc:          "invalid second mode",
+			have:          2001,
 			wantErrorCode: codes.InvalidArgument,
 		},
 		{
-			desc: "invalid third mode",
-			have: 20001,
+			desc:          "invalid third mode",
+			have:          20001,
 			wantErrorCode: codes.InvalidArgument,
 		},
-
 	}
 	for _, tc := range tests {
 		tc := tc
@@ -71,9 +69,7 @@ func TestParse(t *testing.T) {
 				t.Errorf("Parse() unexpected error. want: %s got: %s", want, got)
 				return
 			}
-			if tc.wantErrorCode != codes.OK {
-				return
-			}
+
 			if diff := cmp.Diff(gotResp, tc.wantResp); diff != "" {
 				t.Errorf("Parse() mismatch (-want +got):\n%s\n got: %#v want: %#v", diff, gotResp, tc.wantResp)
 			}
