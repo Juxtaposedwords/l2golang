@@ -3,7 +3,8 @@ package operations
 import (
 	"fmt"
 	"strings"
-
+	"io/ioutil"
+	"github.com/google/logger"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -21,6 +22,10 @@ const (
 	Multiply
 	Copy
 	Print
+	JumpIfTrue
+	JumpIfFalse
+	LessThan
+	Equals
 	Terminate Code = 99
 )
 
@@ -29,16 +34,23 @@ var codeMap = map[string]Code{
 	"02": Multiply,
 	"03": Copy,
 	"04": Print,
+	"05": JumpIfTrue,
+	"06": JumpIfFalse,
+	"07": LessThan,
+	"08": Equals,
 	"99": Terminate,
 }
 
 // CodeLength is a way to store some metadata about instructions.
 var CodeLength = map[Code]int{
-	Add:       4,
-	Multiply:  4,
-	Copy:      2,
-	Print:     2,
-	Terminate: 0,
+	Add:         4,
+	Multiply:    4,
+	Copy:        2,
+	Print:       2,
+	Terminate:   0,
+	JumpIfTrue:  4,
+	JumpIfFalse: 4,
+	Equals:      4,
 }
 
 // Mode represents the two ways to write.
@@ -66,6 +78,7 @@ type InstructionSet struct {
 
 // Parse turns an operation Code into an output of an instruction set.
 func Parse(input int) (*InstructionSet, error) {
+	logger.Init("LoggerExample", true, false, ioutil.Discard)
 
 	paddedInput := fmt.Sprintf("%05d", input)
 	if len(paddedInput) > 5 {
@@ -73,6 +86,7 @@ func Parse(input int) (*InstructionSet, error) {
 	}
 
 	digits := strings.Split(paddedInput, "")
+	logger.Infof(" input: %d %#v",input, digits)
 	opCode, ok := codeMap[fmt.Sprintf("%s%s", digits[3], digits[4])]
 	if !ok {
 		return nil, status.Errorf(codes.InvalidArgument, "invalid operation Code ('%s') provided", fmt.Sprintf("%s%s", digits[3], digits[4]))
@@ -85,10 +99,19 @@ func Parse(input int) (*InstructionSet, error) {
 		return nil, status.Error(codes.InvalidArgument, "invalid operation Mode provided")
 	}
 
-	return &InstructionSet{
+	resp := &InstructionSet{
 		Operation: opCode,
 		First:     first,
 		Second:    second,
 		Third:     third,
-	}, nil
+	}
+
+	switch {
+	case CodeLength[resp.Operation] == 4 && resp.Third == Immediate:
+		fallthrough
+	case resp.Operation == Copy && resp.First == Immediate:
+		return nil, status.Error(codes.InvalidArgument, "target cannot be immediate")
+	}
+	return resp, nil
+
 }

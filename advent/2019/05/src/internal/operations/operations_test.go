@@ -25,13 +25,23 @@ func TestParse(t *testing.T) {
 			},
 		},
 		{
-			desc: "create multiple instructions all with immediate",
-			have: 11101,
+			desc: "add: first and second param immediate",
+			have: 1101,
 			wantResp: &InstructionSet{
 				Operation: Add,
 				First:     Immediate,
 				Second:    Immediate,
-				Third:     Immediate,
+				Third:     Position,
+			},
+		},
+		{
+			desc: "jump if true",
+			have: 1105,
+			wantResp: &InstructionSet{
+				Operation: JumpIfTrue,
+				First:     Immediate,
+				Second:    Immediate,
+				Third:     Position,
 			},
 		},
 		{
@@ -63,10 +73,10 @@ func TestParse(t *testing.T) {
 	for _, tc := range tests {
 		tc := tc
 		t.Run(tc.desc, func(t *testing.T) {
-			t.Parallel()
+		//	t.Parallel()
 			gotResp, err := Parse(tc.have)
 			if got, want := status.Code(err), tc.wantErrorCode; got != want {
-				t.Errorf("Parse() unexpected error. want: %s got: %s", want, got)
+				t.Errorf("Parse() unexpected error. want: %s got: %s %s ", want, got, err.Error())
 				return
 			}
 
