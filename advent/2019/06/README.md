@@ -61,6 +61,9 @@ What is the total number of direct and indirect orbits in your map data?
     2. calls itself on every function, passing it's depth
     3. returns the sum of all orbits
 
+Runtime: N
+    N (as we populate a dictionary) + N/2(as we sum path) 
+
 ## Part II
 
 ### Prompt
@@ -111,3 +114,17 @@ COM - B - C - D - E - F
                   YOU
 What is the minimum number of orbital transfers required to move from the object YOU are orbiting to the object SAN is orbiting? (Between the objects they are orbiting - not between YOU and SAN.)
 ```
+
+### Notes
+Another graph problem that doesn't require a graph. Since we have a dictionary that maps our paths out for us the heavy lifting is done.
+1. Get a slice representing all the steps/orbits we have take
+    a. we'll do this recursively, which will mean we get the slice going bottom up
+2. Get a slice representing all the steps/orbits old nick takes
+3. Reverse the two slices you have from 1. and 2.
+4. Make sure each slice begins with COM (we want to make sure we always share one point of origin, even if that's where it stops).
+    * I make sure that it begins with COM and ends with the target destination. I found the information expedited troubleshooting.
+5. Find the first point which is not shared, the previous entry is now the last shared index
+6. Take the length of each slice starting from the index minus one and add those both together
+
+Runtime: N (where is number of 'planets')
+    N (as we populate a dictionary) + 2N(as we build SAN and YOU paths) + N (as we step over the comparisons)
