@@ -32,17 +32,16 @@ func sanDistance(input io.Reader) (int, error) {
 	longest = append(longest, "COM")
 	reverse(longest)
 
-
 	var index int
 	for index = 0; index < len(shortest); index++ {
 		if shortest[index] != longest[index] {
 			break
 		}
 	}
-	if index == len(shortest) -1 {
+	if index == len(shortest)-1 {
 		return 0, status.Error(codes.NotFound, "unable to find a shared path")
 	}
-	return (len(shortest) -1 - index) + (len(longest) -1 - index) , nil
+	return (len(shortest) - 1 - index) + (len(longest) - 1 - index), nil
 }
 
 func total(input io.Reader) (int, error) {

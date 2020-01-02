@@ -18,7 +18,7 @@ func loadFile(t *testing.T, filepath string) io.Reader {
 	return bufio.NewReader(f)
 }
 
- func TestTotal(t *testing.T) {
+func TestTotal(t *testing.T) {
 	tests := []struct {
 		desc          string
 		have          io.Reader
@@ -41,8 +41,8 @@ K)L`),
 			wantResp: 42,
 		},
 		{
-			desc: "provided example",
-			have: loadFile(t, "/workspace/l2golang/advent/2019/06/input.txt"),
+			desc:     "provided example",
+			have:     loadFile(t, "/workspace/l2golang/advent/2019/06/input.txt"),
 			wantResp: 227612,
 		},
 	}
@@ -60,7 +60,7 @@ K)L`),
 			}
 		})
 	}
-} 
+}
 func TestSanDistance(t *testing.T) {
 	tests := []struct {
 		desc          string
