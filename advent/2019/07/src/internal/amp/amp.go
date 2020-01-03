@@ -74,7 +74,7 @@ func (m *Machine) copy(input *operations.InstructionSet) error {
 	if err != nil {
 		return err
 	}
-	if target >= len(m.software) {
+	if target < 0 || target >= len(m.software) {
 		return status.Error(codes.Internal, "copy() out of bounds error")
 	}
 	m.software[target] = <-m.input
@@ -188,14 +188,15 @@ func (m *Machine) Start() error {
 		return status.Error(codes.FailedPrecondition, "machined already started")
 	}
 	m.State = Running
+	var finished bool
 	go func(m *Machine) {
-		for m.State != Finished {
+		for !finished {
 			var err error
-			finished, err := m.advance()
+			finished, err = m.advance()
 			if err != nil {
 				m.State = Broken
 				m.status = err.Error()
-				m.finished <- true
+				m.err <- err
 				return
 			}
 		}
@@ -211,6 +212,9 @@ func create(software []int, finished chan bool, errChan chan error) *Machine {
 	softwareCopy := make([]int, len(software))
 	copy(softwareCopy, software)
 	return &Machine{
+		State: Unstarted,
+		input: make(chan(int), 100),
+		output: make(chan(int), 10),
 		software: softwareCopy,
 		finished: finished,
 		err:      errChan,
@@ -234,10 +238,13 @@ func createChained(software []int, amount int) ([]*Machine, chan bool, chan erro
 }
 
 // ChainedProcess creates an Amp machine for each phase and connects the input and output of each. The  last value issued by the machine associated with the last phase code is returned.
-func ChainedProcess(software []int, phases []int) (int, error) {
+func ChainedProcess(software []int, phases []int, intialInput int) (int, error) {
 	machines, finishChan, errChan := createChained(software, len(phases))
 	for i, code := range phases {
 		machines[i].input <- code
+		if  i == 0 {
+			machines[i].input <-intialInput
+		}
 		if err := machines[i].Start(); err != nil {
 			return 0, err
 		}
