@@ -1,33 +1,26 @@
 package intcode
 
 import (
+	"io/ioutil"
 	"github.com/google/logger"
+	"fmt"
+	"sync"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"internal/operations"
 )
 
-// State of the running machine
-type State int
-
-// Unstarted, Running, and Finished represent the four states of the machine.
-const (
-	Unstarted State = iota + 1
-	Running
-	Broken
-	Finished
-)
 
 type Machine struct {
-	State         State
+	label string
 	software      []int
 	softwareIndex int
+	wg *sync.WaitGroup
 	input         chan (int)
 	output        chan (int)
 	err           chan (error)
 	finished      chan (bool)
 	last          int
-	status        string
 	verbose       bool
 }
 
@@ -70,15 +63,20 @@ func (m Machine) threeParams(input *operations.InstructionSet) (int, int, int, e
 }
 func (m *Machine) copy(input *operations.InstructionSet) error {
 	// we only want the exact value as this is the target
+	input.First = operations.Immediate
 	target, err := m.oneParam(input)
 	if err != nil {
 		return err
 	}
 	if target < 0 || target >= len(m.software) {
-		return status.Error(codes.Internal, "copy() out of bounds error")
+		return status.Errorf(codes.Internal, "copy() out of bounds error %d", target)
 	}
+
 	m.software[target] = <-m.input
 	m.softwareIndex += 2
+	if m.verbose {
+		logger.Infof("%s copy() val: %d target: %d", m.label,m.software[target],target )
+	}
 	return nil
 }
 func (m *Machine) print(input *operations.InstructionSet) error {
@@ -89,6 +87,9 @@ func (m *Machine) print(input *operations.InstructionSet) error {
 	m.output <- val
 	m.last = val
 	m.softwareIndex += 2
+	if m.verbose {
+		logger.Infof("%s print() %27d -> output", m.label,val)
+	}
 	return nil
 }
 
@@ -107,15 +108,16 @@ func (m *Machine) compute(input *operations.InstructionSet) error {
 		m.software[target] = first + second
 	}
 	m.softwareIndex += 4
-	return nil
-}
-func (m *Machine) multiply(input *operations.InstructionSet) error {
-	first, second, target, err := m.threeParams(input)
-	if err != nil {
-		return err
+
+	if m.verbose {
+		 function  := "Add()    "
+		 if input.Operation == operations.Multiply {
+			 function = "Multiply()"
+		 }
+	
+		logger.Infof("%s %s %18d & %10d = %d target: %d", m.label,function, m.software[target],first, second, target )
 	}
-	m.software[target] = first * second
-	m.softwareIndex += 4
+
 	return nil
 }
 func (m *Machine) jump(input *operations.InstructionSet) error {
@@ -131,6 +133,15 @@ func (m *Machine) jump(input *operations.InstructionSet) error {
 	default:
 		m.softwareIndex += 3
 	}
+	if m.verbose {
+		 function  := "JumpIfTrue() "
+		 if input.Operation == operations.JumpIfFalse {
+			 function = "JumpIfFalse()"
+		 }
+	
+		logger.Infof("%s %s %15d", m.label,function, target )
+	}
+
 	return nil
 }
 func (m *Machine) compare(input *operations.InstructionSet) error {
@@ -148,6 +159,9 @@ func (m *Machine) compare(input *operations.InstructionSet) error {
 	}
 	m.software[target] = output
 	m.softwareIndex += 4
+	if m.verbose {	
+		logger.Infof("%s Equals() %d & %d target: %d", m.label,first, second, target )
+	}
 	return nil
 }
 
@@ -156,9 +170,7 @@ func (m *Machine) advance() (bool, error) {
 	if err != nil {
 		return false, err
 	}
-	if m.verbose {
-		logger.Infof("\nadvance(%#v): %#v->%#v", instruction.Operation, m.software[:m.softwareIndex], m.software[m.softwareIndex:])
-	}
+
 
 	switch instruction.Operation {
 	case operations.Add, operations.Multiply:
@@ -184,79 +196,133 @@ func (m *Machine) Outputs(tm *Machine) {
 
 // Start causes an amp machine to go from unstarted to running.
 func (m *Machine) Start() error {
-	if m.State != Unstarted {
-		return status.Error(codes.FailedPrecondition, "machined already started")
-	}
-	m.State = Running
 	var finished bool
+
 	go func(m *Machine) {
+		defer m.wg.Done()
 		for !finished {
 			var err error
 			finished, err = m.advance()
 			if err != nil {
-				m.State = Broken
-				m.status = err.Error()
 				m.err <- err
 				return
 			}
 		}
-		m.finished <- true
-
 	}(m)
 
 	return nil
 }
 
 // Create makes a copy of the tape and returns the machine.
-func create(software []int, finished chan bool, errChan chan error) *Machine {
+func create(software []int, wg *sync.WaitGroup, errChan chan error) *Machine {
 	softwareCopy := make([]int, len(software))
 	copy(softwareCopy, software)
 	return &Machine{
-		State: Unstarted,
-		input: make(chan(int), 100),
-		output: make(chan(int), 10),
+		input:    make(chan (int), 10),
+		output:   make(chan (int), 10),
 		software: softwareCopy,
-		finished: finished,
 		err:      errChan,
+		verbose: true,
+		wg: wg,
 	}
 }
 
 // CreateChained connects a series of amps who have connected output and input leading in a circle.
-func createChained(software []int, amount int) ([]*Machine, chan bool, chan error) {
+func createChained(software []int, amount int) ([]*Machine, *sync.WaitGroup, chan error) {
 	if amount <= 0 {
-		return nil, nil,nil
+		return nil, nil, nil
 	}
-	finishChan, errChan := make(chan bool, amount), make(chan error, amount)
-	machines := []*Machine{create(software, finishChan,errChan)}
+	errChan := make(chan error, amount)
+	wg := &sync.WaitGroup{}
+	wg.Add(amount)
+	machines := []*Machine{create(software, wg, errChan)}
+	machines[0].label = "00"
 	for i := 1; i < amount; i++ {
-		m := create(software, finishChan,errChan)
+		m := create(software, wg, errChan)
+		m.label = fmt.Sprintf("%02d",i)
 		m.input = machines[i-1].output
 		machines = append(machines, m)
 	}
 	machines[0].input = machines[amount-1].output
-	return machines, finishChan, errChan
+	return machines, wg, errChan
 }
 
 // ChainedProcess creates an Amp machine for each phase and connects the input and output of each. The  last value issued by the machine associated with the last phase code is returned.
-func ChainedProcess(software []int, phases []int, intialInput int) (int, error) {
-	machines, finishChan, errChan := createChained(software, len(phases))
+func ChainedProcess(software []int, phases []int, intialInput int) (int, error) {	
+	logger.Init("Amp code", true, false, ioutil.Discard)
+	machines, wg, errChan := createChained(software, len(phases))
 	for i, code := range phases {
 		machines[i].input <- code
-		if  i == 0 {
-			machines[i].input <-intialInput
+		if i == 0 {
+			machines[i].input <- intialInput
 		}
 		if err := machines[i].Start(); err != nil {
 			return 0, err
 		}
 	}
-	var finished int
-	for finished < len(phases) {
-		select {
-		case <-finishChan:
-			finished++
-		case err := <- errChan:
+	wg.Wait()
+	select {
+	case err, ok := <-errChan:
+		if ok {
 			return 0, err
 		}
+	default:
 	}
+
 	return machines[len(machines)-1].last, nil
+}
+
+func generateIntPermutations(xs []int) (permuts [][]int) {
+	var rc func([]int, int)
+	rc = func(a []int, k int) {
+		if k == len(a) {
+			permuts = append(permuts, append([]int{}, a...))
+		} else {
+			for i := k; i < len(xs); i++ {
+				a[k], a[i] = a[i], a[k]
+				rc(a, k+1)
+				a[k], a[i] = a[i], a[k]
+			}
+		}
+	}
+	rc(xs, 0)
+
+	return permuts
+}
+
+func PossiblePermutations(software []int, phases []int, intialInput int) (int, []int, error){
+	phasePermutations := generateIntPermutations(phases)
+	var highest int
+	intChan := make(chan int, len(phasePermutations))
+	errChan := make(chan error, len(phasePermutations))
+	wg := &sync.WaitGroup{}
+	var combo []int
+	for _, permutation := range phasePermutations {
+		go func(permutation []int){
+		wg.Add(1)
+		defer wg.Done()
+		resp, err := ChainedProcess(software,phases, intialInput)
+		if err != nil {
+			errChan <-err 
+		}
+		intChan <-resp
+		}(permutation)
+	}
+	wg.Wait()
+	for {
+	select {
+	case err, ok := <-errChan:
+		if ok {
+			return 0, nil, err
+		}
+	case resp, ok := <-intChan:
+		if ok && resp > highest  {
+			highest = resp
+		}
+	default:
+		break
+	}
+}
+	return highest, combo, nil
+
 }
