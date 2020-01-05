@@ -155,6 +155,7 @@ func (m *Machine) compare(input *operations.InstructionSet) error {
 	case first < second && input.Operation == operations.LessThan:
 		fallthrough
 	case first == second && input.Operation == operations.Equals:
+
 		output = 1
 	}
 	m.software[target] = output
@@ -222,7 +223,6 @@ func create(software []int, wg *sync.WaitGroup, errChan chan error) *Machine {
 		output:   make(chan (int), 10),
 		software: softwareCopy,
 		err:      errChan,
-		verbose: true,
 		wg: wg,
 	}
 }
@@ -293,36 +293,17 @@ func generateIntPermutations(xs []int) (permuts [][]int) {
 func PossiblePermutations(software []int, phases []int, intialInput int) (int, []int, error){
 	phasePermutations := generateIntPermutations(phases)
 	var highest int
-	intChan := make(chan int, len(phasePermutations))
-	errChan := make(chan error, len(phasePermutations))
-	wg := &sync.WaitGroup{}
 	var combo []int
 	for _, permutation := range phasePermutations {
-		go func(permutation []int){
-		wg.Add(1)
-		defer wg.Done()
-		resp, err := ChainedProcess(software,phases, intialInput)
+		resp, err := ChainedProcess(software,permutation, intialInput)
 		if err != nil {
-			errChan <-err 
+			return 0, nil, err 
 		}
-		intChan <-resp
-		}(permutation)
+		if resp > highest {
+			highest= resp
+			combo = permutation
+		}
 	}
-	wg.Wait()
-	for {
-	select {
-	case err, ok := <-errChan:
-		if ok {
-			return 0, nil, err
-		}
-	case resp, ok := <-intChan:
-		if ok && resp > highest  {
-			highest = resp
-		}
-	default:
-		break
-	}
-}
 	return highest, combo, nil
 
 }
