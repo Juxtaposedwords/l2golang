@@ -1,6 +1,19 @@
-package races 
+package races
+
+import (
+	"fmt"
+	"io"
+	"io/ioutil"
+	"regexp"
+	"strconv"
+	"strings"
+
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
+)
+
 type Race struct {
-	Name string
+	Name        string
 	Description string
 	Source      string
 	Type        string
@@ -12,6 +25,10 @@ type Race struct {
 type RaceTuple struct {
 	URL  string
 	Name string
+}
+type Mod struct {
+	Stat  string
+	Value int
 }
 
 func ListRaces(baseURL string, input io.Reader) ([]*RaceTuple, error) {
@@ -77,7 +94,7 @@ func raceModifiers(input string) ([]*Mod, error) {
 	var output []*Mod
 	for _, entry := range strings.Split(line, ",") {
 		parts := strings.Split(strings.TrimSpace(entry), " ")
-	//	log.Infof(" output: %#v parts: %#v line: %q base: %q", output, parts, line, input)
+		//	log.Infof(" output: %#v parts: %#v line: %q base: %q", output, parts, line, input)
 		strVals := map[string]int{
 			"+2": 2,
 			"-2": -2,
@@ -89,7 +106,6 @@ func raceModifiers(input string) ([]*Mod, error) {
 			Stat:  strings.ToLower(parts[1]),
 			Value: strVals[parts[0]],
 		})
-
 	}
 	return output, nil
 }

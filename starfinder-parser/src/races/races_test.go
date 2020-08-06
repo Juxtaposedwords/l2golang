@@ -1,4 +1,17 @@
-package races 
+package races
+
+import (
+	"fmt"
+	log "github.com/google/logger"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
+	"io"
+	"io/ioutil"
+	"regexp"
+	"strconv"
+	"strings"
+)
+
 func readerfy(input string, t *testing.T) io.ReadCloser {
 	f, err := os.Open(input)
 	if err != nil {
