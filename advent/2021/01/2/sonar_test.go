@@ -2,10 +2,6 @@ package sonar
 
 import (
 	"testing"
-
-	"google.golang.org/grpc/status"
-
-	"google.golang.org/grpc/codes"
 )
 
 func TestIncreased(t *testing.T) {
@@ -42,35 +38,22 @@ func TestIncreased(t *testing.T) {
 }
 func TestWindowIncreased(t *testing.T) {
 	tests := []struct {
-		desc       string
-		haveDepths []int
-		haveWindow int
-		want       int
-		wantCode   codes.Code
+		desc string
+		have []int
+		want int
 	}{
 		{
-			desc:       "Happy path: provided case",
-			haveDepths: []int{601, 618, 618, 617, 647, 716, 769, 792},
-			haveWindow: 3,
-			want:       5,
-		},
-		{
-			desc:       "invalid window length",
-			haveWindow: 0,
-			wantCode:   codes.InvalidArgument,
-			want:       0,
+			desc: "Happy path: provided case",
+			have: []int{607, 618, 618, 617, 647, 716, 769, 792},
+			want: 5,
 		},
 	}
 	for _, tc := range tests {
 		tc := tc // Without this t.Parallel() will break)
 		t.Run(tc.desc, func(t *testing.T) {
 			t.Parallel()
-			got, err := WindowedIncreased(tc.haveDepths, tc.haveWindow)
-			if err := status.Code(err); err != tc.wantCode {
-				t.Fatalf("WindowedIncreased() unexpected error. want: %s got: %d", tc.wantCode, got)
 
-			}
-			if got != tc.want {
+			if got := WindowedIncreased(tc.have, t); got != tc.want {
 				t.Errorf("Increased() mismatch want: %d got: %d", tc.want, got)
 			}
 		})

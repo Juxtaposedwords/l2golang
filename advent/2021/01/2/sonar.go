@@ -11,6 +11,11 @@ func Increased(depths []int) int {
 	return increased
 }
 
-func WindowedIncreased(depths []int, window int) (int, error) {
-	return 0, nil
+func WindowedIncreased(depths []int) int {
+	windowDepths := []int{}
+	for i := 2; i < len(depths); i++ {
+		depth := depths[i-2] + depths[i-1] + depths[i]
+		windowDepths = append(windowDepths, depth)
+	}
+	return Increased(windowDepths)
 }
