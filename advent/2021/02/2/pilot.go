@@ -9,7 +9,7 @@ import (
 )
 
 func Navigate(instructions []string) (int, error) {
-	horizontal, depth := 0, 0
+	horizontal, depth, aim := 0, 0, 0
 	for _, instruction := range instructions {
 		pieces := strings.Split(instruction, " ")
 		if len(pieces) != 2 {
@@ -23,10 +23,13 @@ func Navigate(instructions []string) (int, error) {
 		switch operator {
 		case "forward":
 			horizontal += value
+			if aim != 0 {
+				depth += value * aim
+			}
 		case "down":
-			depth += value
+			aim += value
 		case "up":
-			depth -= value
+			aim -= value
 		default:
 			return 0, status.Errorf(codes.InvalidArgument, "%q is not a recognized command. Recognized commands are forward, down, and up. ", operator)
 		}
