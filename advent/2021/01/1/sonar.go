@@ -1,5 +1,12 @@
 package sonar
 
 func Increased(depths []int) int {
-	return 0
+	increased := 0
+	for i := 1; i < len(depths); i++ {
+		l, r := depths[i-1], depths[i]
+		if l < r {
+			increased++
+		}
+	}
+	return increased
 }
