@@ -12,7 +12,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func LastWinningScore(input *bufio.Reader, t *testing.T) (int, error) {
+func LastWinningScore(input *bufio.Reader) (int, error) {
 	line, _, err := input.ReadLine()
 	if err != nil {
 		return 0, status.Errorf(codes.InvalidArgument, "failed to read first line of buffer with: %s", err)
@@ -28,7 +28,7 @@ func LastWinningScore(input *bufio.Reader, t *testing.T) (int, error) {
 
 	}
 
-	allBoards, err := parse(input, t)
+	allBoards, err := parse(input)
 
 	if err != nil {
 		return 0, err

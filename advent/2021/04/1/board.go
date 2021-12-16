@@ -1,8 +1,6 @@
 package bingo
 
 import (
-	"testing"
-
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -21,7 +19,7 @@ func new(input [5][5]int) *board {
 	}
 }
 
-func (b *board) check(input int, t *testing.T) (bool, error) {
+func (b *board) check(input int) (bool, error) {
 	b.called[input] = true
 	b.last = input
 

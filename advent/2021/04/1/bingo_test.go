@@ -45,7 +45,7 @@ func TestWinningScore(t *testing.T) {
 		tc := tc // Without this t.Parallel() will break)
 		t.Run(tc.desc, func(t *testing.T) {
 			t.Parallel()
-			got, err := WinningScore(tc.have, t)
+			got, err := WinningScore(tc.have)
 			if got, want := status.Code(err), tc.wantCode; got != want {
 				t.Fatalf("WinningScore() unexpected status code. want: %s got: %s err: %s", want, got, err)
 			}

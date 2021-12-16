@@ -12,7 +12,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func WinningScore(input *bufio.Reader, t *testing.T) (int, error) {
+func WinningScore(input *bufio.Reader) (int, error) {
 	line, _, err := input.ReadLine()
 	if err != nil {
 		return 0, status.Errorf(codes.InvalidArgument, "failed to read first line of buffer with: %s", err)
@@ -28,19 +28,17 @@ func WinningScore(input *bufio.Reader, t *testing.T) (int, error) {
 
 	}
 
-	allBoards, err := parse(input, t)
+	allBoards, err := parse(input)
 
 	if err != nil {
-		t.Logf("%s", err)
 		return 0, err
 	}
-	t.Logf("boards: %#v", allBoards)
 
 	for _, calledNumber := range calledNumbers {
 		var winning []*board
 
 		for _, singleBoard := range allBoards {
-			ok, err := singleBoard.check(calledNumber, t)
+			ok, err := singleBoard.check(calledNumber)
 			if err != nil {
 				return 0, err
 			}
@@ -66,7 +64,7 @@ func WinningScore(input *bufio.Reader, t *testing.T) (int, error) {
 	return 0, nil
 }
 
-func parse(input *bufio.Reader, t *testing.T) ([]*board, error) {
+func parse(input *bufio.Reader) ([]*board, error) {
 	var output []*board
 	_, _, err := input.ReadLine()
 	for !errors.Is(err, io.EOF) {
@@ -80,7 +78,7 @@ func parse(input *bufio.Reader, t *testing.T) ([]*board, error) {
 			if err != nil {
 				return nil, status.Errorf(codes.Internal, "failed to read a row %d , %#v", i, rowInput)
 			}
-			grid[i], err = row(string(rowInput), t)
+			grid[i], err = row(string(rowInput))
 			if err != nil {
 				return nil, err
 			}
