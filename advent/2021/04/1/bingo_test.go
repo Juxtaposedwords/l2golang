@@ -47,7 +47,7 @@ func TestWinningScore(t *testing.T) {
 			t.Parallel()
 			got, err := WinningScore(tc.have, t)
 			if got, want := status.Code(err), tc.wantCode; got != want {
-				t.Fatalf("WinningScore() unexpected status code. want: %s got: %s", want, got)
+				t.Fatalf("WinningScore() unexpected status code. want: %s got: %s err: %s", want, got, err)
 			}
 			if got != tc.wantResult {
 				t.Errorf("WinningScore() mismatch want: %d got: %d", tc.wantResult, got)

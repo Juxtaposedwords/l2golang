@@ -3,8 +3,8 @@ package bingo
 import (
 	"bufio"
 	"errors"
-	"fmt"
 	"io"
+	"strconv"
 	"strings"
 	"testing"
 
@@ -12,75 +12,103 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-type board struct {
-	entries [5][5]string
-	
-}
-
 func WinningScore(input *bufio.Reader, t *testing.T) (int, error) {
 	line, _, err := input.ReadLine()
 	if err != nil {
 		return 0, status.Errorf(codes.InvalidArgument, "failed to read first line of buffer with: %s", err)
 	}
 	called := strings.Split(string(line), ",")
-	for i := range called {
-		if len(called[i]) == 1 {
-			called[i] = fmt.Sprintf(" %s", called[i])
+	var calledNumbers []int
+	for i, number := range called {
+		calledNumber, err := strconv.Atoi(strings.TrimSpace(number))
+		if err != nil {
+			return 0, status.Errorf(codes.Internal, "failed to parse called called number %d (zero based) with: %s ", i, err)
 		}
-	}
-	t.Logf("numbers: %#v", called)
+		calledNumbers = append(calledNumbers, calledNumber)
 
-	b, err := boards(input, t)
+	}
+
+	allBoards, err := parse(input, t)
+
 	if err != nil {
 		t.Logf("%s", err)
-
 		return 0, err
 	}
-	t.Logf("board: %#v", b)
+	t.Logf("boards: %#v", allBoards)
 
+	for _, calledNumber := range calledNumbers {
+		var winning []*board
+
+		for _, singleBoard := range allBoards {
+			ok, err := singleBoard.check(calledNumber, t)
+			if err != nil {
+				return 0, err
+			}
+
+			if ok {
+				winning = append(winning, singleBoard)
+			}
+		}
+		var winner int
+		for _, b := range winning {
+			score, err := b.score()
+			if err != nil {
+				return 0, err
+			}
+			if score > winner {
+				winner = score
+			}
+		}
+		if winner != 0 {
+			return winner, nil
+		}
+	}
 	return 0, nil
 }
-func winningValue(board [5][5]string, called map[string]bool) (int, bool) {
+
+func parse(input *bufio.Reader, t *testing.T) ([]*board, error) {
+	var output []*board
+	_, _, err := input.ReadLine()
+	for !errors.Is(err, io.EOF) {
+		if err != nil {
+			return nil, status.Errorf(codes.Internal, "failed to read a line of buffer: %s", err)
+		}
+		var grid [5][5]int
+		// Load one board
+		for i := 0; i < 5; i++ {
+			rowInput, _, err := input.ReadLine()
+			if err != nil {
+				return nil, status.Errorf(codes.Internal, "failed to read a row %d , %#v", i, rowInput)
+			}
+			grid[i], err = row(string(rowInput), t)
+			if err != nil {
+				return nil, err
+			}
+		}
+		output = append(output, new(grid))
+		_, _, err = input.ReadLine()
+	}
+	return output, nil
+}
+func row(s string, t *testing.T) ([5]int, error) {
+	if len(s) != 14 {
+		return [5]int{}, status.Errorf(codes.FailedPrecondition, "invalid length of a row found. Expected 14 got %d for %s", len(s), s)
+	}
+	var row []string
+	for _, entry := range strings.Split(s, " ") {
+		if entry != "" {
+			row = append(row, strings.TrimSpace(entry))
+		}
+	}
+
+	var output [5]int
 
 	for i := 0; i < 5; i++ {
-		var win bool
-		for j := 0; j < 5; j++ {
-
-		}
-	}
-	return 0, false
-}
-func boards(input *bufio.Reader, t *testing.T) ([][5][5]string, error) {
-	output := [][5][5]string{}
-	for i := 0; ; i++ {
-		_, _, err := input.ReadLine()
-		if errors.Is(err, io.EOF) {
-			return output, nil
-		}
+		var err error
+		output[i], err = strconv.Atoi(strings.TrimSpace(row[i]))
 		if err != nil {
-			return output, status.Errorf(codes.Internal, "failed to read a line of buffer: %s", err)
+			return output, status.Errorf(codes.Internal, "failed to parse row(%#v) entry: %q at column %d entry with: %s", s, row[i], i, err)
 		}
-		var board [5][5]string
-		for j := 0; j < 5; j++ {
-			rawLine, _, err := input.ReadLine()
-			if err != nil {
-				return output, status.Errorf(codes.Internal, "failed to read a row %d from board %d", j, i)
-			}
-			board[i], err = row(string(rawLine))
-			if err != nil {
-				return output, err
-			}
-			t.Logf("board %d row %d :%#v", i, j, board[i])
-		}
-
 	}
-}
-func row(s string) ([5]string, error) {
-	if len(s) != 14 {
-		return [5]string{}, status.Errorf(codes.FailedPrecondition, "invalid length of a row found. Expected 14 got %d for %s", len(s), s)
-	}
-	row := [5]string{
-		string(s[0:2]), string(s[3:5]), string(s[6:8]), string(s[9:11]), string(s[12:14]),
-	}
-	return row, nil
+	return output, nil
 }
