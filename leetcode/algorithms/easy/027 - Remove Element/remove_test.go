@@ -1,6 +1,7 @@
 package remove
 
 import (
+	"sort"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
@@ -37,10 +38,14 @@ func TestRemover(t *testing.T) {
 			if got := Remover(tc.haveNums, tc.haveVal); got != tc.wantResp {
 				t.Fatalf("Remover(%#v,%d): Failed to get expected output. Got: %d Want: %d", tc.haveNums, tc.haveVal, got, tc.wantResp)
 			}
-			if diff := cmp.Diff(tc.HaveNums[:tc.wantResp], wantNums); diff != "" {
-				t.Fatalf("Remover(%#v,%d) input array mutation mismatch (-want +got):\n%s", tc.haveNums, tc.haveVal, diff)
+			trans := cmp.Transformer("Sort", func(in []int) []int {
+				out := append([]int(nil), in...) // Copy input to avoid mutating it
+				sort.Ints(out)
+				return out
+			})
+			if diff := cmp.Diff(tc.haveNums[:tc.wantResp], tc.wantNums, trans); diff != "" {
+				t.Errorf("Remover(%#v,%d) input array mutation mismatch (-want +got):\n%s", tc.haveNums, tc.haveVal, diff)
 			}
-
 		})
 	}
 }
