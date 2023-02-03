@@ -41,3 +41,14 @@ So my first approach would be to:
 Looking at the question just generally, it feels like a 'heaps' question though i'm not able to grok how i'd use them here. 
 
 Run time: I'm thinking an O(n) run time as we build a dictionary and iterate rather than trying to sort. 
+
+## Once into it
+
+I broke down and used sort (though Go doens't make that easy). As the easiest way to cast our  word as rune then deal with the sort function.
+
+
+The real annoying part was dealing with all the cmpOptoins for comparison. Time wise was my only concern, but the test seem to run fast enough.
+
+Since we have to sort the word, no matter what we do (character coutn or otherwise) we know we're dealing with O(N w log w) where w is the word and n is word count. We could have gone faster if we used heaps to just know the order.  
+
+Leetcode talks a hot O(N W) for bucketing by count ,but this requires your language ot have a built in sorting/pretty printing function.

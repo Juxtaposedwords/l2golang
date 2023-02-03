@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
+	"github.com/google/go-cmp/cmp/cmpopts"
 )
 
 func TestGroupAnagarams(t *testing.T) {
@@ -32,9 +33,9 @@ func TestGroupAnagarams(t *testing.T) {
 
 		{
 			desc: "Case 3: Happy Path",
-			have: []string{"eat", "tea", "tan", "ate", "nat", "bat"},
+			have: []string{"a"},
 			want: [][]string{
-				[]string{},
+				[]string{"a"},
 			},
 		},
 	}
@@ -43,7 +44,10 @@ func TestGroupAnagarams(t *testing.T) {
 		t.Run(tc.desc, func(t *testing.T) {
 			t.Parallel()
 			got := GroupAnagrams(tc.have)
-			if diff := cmp.Diff(got, tc.want); diff != "" {
+			lessSlice := func(l, r []string) bool { return len(l) < len(r) }
+			lessAlpha := func(l, r string) bool { return l < r }
+
+			if diff := cmp.Diff(tc.want, got, cmpopts.SortSlices(lessAlpha), cmpopts.SortSlices(lessSlice)); diff != "" {
 				t.Errorf("IsAnagram(...) output different from expected(-want +got):\n%s", diff)
 			}
 
